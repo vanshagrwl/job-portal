@@ -46,6 +46,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+.bolt/
 
 # Build outputs
 dist/
