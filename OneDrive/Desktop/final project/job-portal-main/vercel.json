@@ -1,0 +1,13 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "env": {
+    "VITE_API_URL": {
+      "description": "API URL for the frontend",
+      "example": "https://your-backend-domain.com/api"
+    }
+  }
+}
