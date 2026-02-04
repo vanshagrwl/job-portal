@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Job, Application, jobsAPI, applicationsAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
@@ -18,6 +18,7 @@ interface SearchSuggestion {
 
 export default function SeekerDashboard() {
   const { user, token, profile } = useAuth();
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
@@ -438,7 +439,7 @@ export default function SeekerDashboard() {
               <motion.div key={job._id} variants={itemVariants}>
                 <StackedJobCard
                   job={job}
-                  onViewDetails={(id) => window.location.assign(`/jobs/${id}`)}
+                  onViewDetails={(id) => navigate(`/jobs/${id}`)}
                   index={idx}
                 />
               </motion.div>
