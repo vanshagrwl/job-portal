@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'dreamai-job.vercel.app' 
+  ? 'https://job-portal-backend-production-7db4.up.railway.app/api'
+  : 'http://localhost:5000/api');
 
 // API request timeout (10 seconds)
 const REQUEST_TIMEOUT = 10000;
