@@ -4,18 +4,6 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "numReplicas": 1,
-    "startCommand": "npm start",
-    "restartPolicyMaxRetries": 5,
-    "healthchecks": {
-      "liveness": {
-        "httpGet": {
-          "path": "/health",
-          "port": 8080
-        },
-        "initialDelaySeconds": 10,
-        "periodSeconds": 10
-      }
-    }
+    "startCommand": "npm start"
   }
 }
