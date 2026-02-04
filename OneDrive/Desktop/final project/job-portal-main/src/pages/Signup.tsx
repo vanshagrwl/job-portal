@@ -124,7 +124,7 @@ export default function Signup() {
             variants={itemVariants}
             initial="hidden"
             animate="visible"
-            className="text-4xl font-bold text-white mb-3 leading-tight"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 leading-tight"
           >
             Join JobHub
           </motion.h1>

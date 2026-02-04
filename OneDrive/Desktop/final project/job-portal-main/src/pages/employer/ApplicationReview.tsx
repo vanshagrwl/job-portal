@@ -99,7 +99,7 @@ export default function ApplicationReview() {
 
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto px-4">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -114,8 +114,8 @@ export default function ApplicationReview() {
             <span>Back to Dashboard</span>
           </button>
 
-          <h1 className="text-4xl font-bold text-white mb-2">Application Review</h1>
-          <p className="text-gray-400">Position: {jobTitle}</p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">Application Review</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Position: {jobTitle}</p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

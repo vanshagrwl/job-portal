@@ -69,7 +69,7 @@ export default function EmployerApplications() {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -84,8 +84,8 @@ export default function EmployerApplications() {
             <span>Back to Dashboard</span>
           </button>
 
-          <h1 className="text-4xl font-bold text-white mb-2">All Applications</h1>
-          <p className="text-gray-400">Total: {applications.length} applications</p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">All Applications</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Total: {applications.length} applications</p>
         </motion.div>
 
         {/* Status Filter */}
