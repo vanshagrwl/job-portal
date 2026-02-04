@@ -8,7 +8,7 @@ import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
 import { StackedJobCard } from '../../components';
 import FilterDrawer from '../../components/FilterDrawer';
-import { Search, Briefcase, MapPin, DollarSign, Clock, FileText, X } from 'lucide-react';
+import { Search, Briefcase, MapPin, Clock, FileText, X } from 'lucide-react';
 
 interface SearchSuggestion {
   type: 'title' | 'location' | 'skill';
@@ -221,17 +221,17 @@ export default function SeekerDashboard() {
 
   return (
     <Layout>
-      <div className="space-y-8">
+      <div className="space-y-8 max-w-6xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <h1 className="text-4xl font-bold text-white mb-2">Find Your Dream Job</h1>
-          <p className="text-gray-400">Discover opportunities that match your skills</p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">Find Your Dream Job</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Discover opportunities that match your skills</p>
         </motion.div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
           <div className="flex space-x-4">
             <Link to="/profile">
               <Button variant="secondary">
@@ -256,7 +256,7 @@ export default function SeekerDashboard() {
           </div>
         </div>
 
-        <GlassCard className="p-6 relative z-20 overflow-visible">
+        <GlassCard className="p-4 sm:p-6 relative z-20 overflow-visible">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />

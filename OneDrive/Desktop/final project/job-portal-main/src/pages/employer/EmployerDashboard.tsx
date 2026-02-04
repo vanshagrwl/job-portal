@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
-import { Plus, Briefcase, Users, Eye, TrendingUp, MapPin, DollarSign } from 'lucide-react';
+import { Plus, Briefcase, Users, Eye, TrendingUp, MapPin } from 'lucide-react';
 
 export default function EmployerDashboard() {
   const { user, token } = useAuth();
@@ -107,15 +107,15 @@ export default function EmployerDashboard() {
 
   return (
     <Layout>
-      <div className="space-y-8">
+      <div className="space-y-8 max-w-6xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex justify-between items-center"
+          className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4"
         >
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Employer Dashboard</h1>
-            <p className="text-gray-400">Manage your job postings and applications</p>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">Employer Dashboard</h1>
+            <p className="text-gray-400 text-sm sm:text-base">Manage your job postings and applications</p>
           </div>
           <Link to="/post-job">
             <Button variant="primary" className="flex items-center space-x-2">
@@ -129,11 +129,11 @@ export default function EmployerDashboard() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {stats.map((stat, index) => (
             <motion.div key={index} variants={itemVariants}>
-              <GlassCard className="p-6">
+              <GlassCard className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm mb-1">{stat.label}</p>
@@ -166,7 +166,7 @@ export default function EmployerDashboard() {
               <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
                 {jobs.map((job) => (
                   <motion.div key={job._id} variants={itemVariants}>
-                    <GlassCard className="p-6">
+                    <GlassCard className="p-4 sm:p-6">
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <h3 className="text-lg font-semibold text-white mb-1">{job.title}</h3>
@@ -179,8 +179,8 @@ export default function EmployerDashboard() {
                             )}
                             {job.salary_min && job.salary_max && (
                               <span className="flex items-center">
-                                <DollarSign className="w-3 h-3 mr-1" />
-                                ${job.salary_min.toLocaleString()} - ${job.salary_max.toLocaleString()}
+                                <span className="w-3 h-3 mr-1 text-gray-400">₹</span>
+                                {job.salary_min.toLocaleString()} - {job.salary_max.toLocaleString()}
                               </span>
                             )}
                           </div>

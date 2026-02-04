@@ -81,7 +81,7 @@ export default function Login() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="w-full max-w-md relative z-10"
+        className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl px-4 relative z-10"
       >
         {/* Main content */}
         <div className="text-center mb-10">
@@ -107,7 +107,7 @@ export default function Login() {
             variants={itemVariants}
             initial="hidden"
             animate="visible"
-            className="text-4xl font-bold text-white mb-3 leading-tight"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 leading-tight"
           >
             Welcome Back
           </motion.h1>
@@ -117,14 +117,14 @@ export default function Login() {
             variants={itemVariants}
             initial="hidden"
             animate="visible"
-            className="text-gray-300 mb-8"
+            className="text-gray-300 mb-8 text-sm sm:text-base"
           >
             Sign in to your account to continue
           </motion.p>
         </div>
 
         {/* Form Card */}
-        <GlassCard className="p-8 shadow-2xl border border-white/10 bg-white/5 backdrop-blur-2xl">
+        <GlassCard className="p-6 sm:p-8 lg:p-10 shadow-2xl border border-white/10 bg-white/5 backdrop-blur-2xl">
           <motion.form
             onSubmit={handleSubmit}
             className="space-y-6"
