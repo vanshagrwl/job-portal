@@ -232,26 +232,26 @@ export default function SeekerDashboard() {
           <p className="text-gray-400 text-sm sm:text-base">Discover opportunities that match your skills</p>
         </motion.div>
 
-        <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
-          <div className="flex space-x-4">
-            <Link to="/profile">
-              <Button variant="secondary">
-                <FileText className="w-4 h-4 mr-2" />
-                My Profile
+        <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-2 sm:gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
+            <Link to="/profile" className="w-full sm:w-auto">
+              <Button variant="secondary" className="w-full sm:w-auto whitespace-nowrap text-xs sm:text-sm flex items-center justify-center">
+                <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span>My Profile</span>
               </Button>
             </Link>
-            <Link to="/my-applications">
-              <Button variant="secondary">
-                <Briefcase className="w-4 h-4 mr-2" />
-                My Applications ({applications.length})
+            <Link to="/my-applications" className="w-full sm:w-auto">
+              <Button variant="secondary" className="w-full sm:w-auto whitespace-nowrap text-xs sm:text-sm flex items-center justify-center">
+                <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span>My Apps ({applications.length})</span>
               </Button>
             </Link>
           </div>
-          <div className="flex items-center space-x-3">
-            <Button variant="secondary" onClick={() => setFilterDrawerOpen(true)}>
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <Button variant="secondary" onClick={() => setFilterDrawerOpen(true)} className="flex-1 sm:flex-none text-xs sm:text-sm">
               Filters
             </Button>
-            <Button variant="primary" onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}>
+            <Button variant="primary" onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="flex-1 sm:flex-none text-xs sm:text-sm">
               Explore
             </Button>
           </div>
