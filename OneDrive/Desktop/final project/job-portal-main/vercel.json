@@ -1,8 +1,5 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "framework": "vite",
-  "env": {
-    "VITE_API_URL": "@vite_api_url"
-  }
+  "framework": "vite"
 }
