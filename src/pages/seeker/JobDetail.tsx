@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Job, jobsAPI, applicationsAPI, profileAPI, SeekerProfile } from '../../lib/api';
+import { Job, jobsAPI, applicationsAPI, profileAPI, SeekerProfile, API_URL } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
@@ -262,7 +262,7 @@ export default function JobDetail() {
                         
                         const filename = seekerProfile.resume_url.split('/').pop();
                         const encodedFilename = encodeURIComponent(filename || 'resume.pdf');
-                        const downloadUrl = `http://localhost:5000/api/profile/resume/${encodedFilename}`;
+                        const downloadUrl = `${API_URL}/profile/resume/${encodedFilename}`;
                         
                         console.log('Downloading resume from:', downloadUrl);
                         console.log('Token:', token.substring(0, 20) + '...');

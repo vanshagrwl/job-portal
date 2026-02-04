@@ -2,6 +2,8 @@ const API_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' &
   ? 'https://job-portal-backend-production-7db4.up.railway.app/api'
   : 'http://localhost:5000/api');
 
+export { API_URL };
+
 // API request timeout (10 seconds)
 const REQUEST_TIMEOUT = 10000;
 

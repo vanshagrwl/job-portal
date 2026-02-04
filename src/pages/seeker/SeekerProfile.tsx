@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { SeekerProfile as SeekerProfileType, profileAPI } from '../../lib/api';
+import { SeekerProfile as SeekerProfileType, profileAPI, API_URL } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
@@ -88,9 +88,10 @@ export default function SeekerProfilePage() {
 
       console.log('Saving seeker profile with:', { skills, bio, location, phone, hasResume: !!resumeFile });
       console.log('Token:', token.substring(0, 20) + '...');
+      console.log('API URL:', API_URL);
 
       // Use FormData with file upload
-      const response = await fetch('http://localhost:5000/api/profile/seeker', {
+      const response = await fetch(`${API_URL}/profile/seeker`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`
