@@ -7,5 +7,10 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  define: {
+    'import.meta.env.VITE_API_URL': JSON.stringify(
+      process.env.VITE_API_URL || 'https://job-portal-backend-production-7db4.up.railway.app/api'
+    ),
+  },
 });
 
