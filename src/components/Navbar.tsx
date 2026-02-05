@@ -3,12 +3,33 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Button from './Button';
 import { Briefcase, User, LogOut, Bell, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { applicationsAPI } from '../lib/api';
 
 export default function Navbar() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, token } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (profile?.role === 'employer' && token) {
+      fetchPendingCount();
+      const interval = setInterval(fetchPendingCount, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [profile?.role, token]);
+
+  const fetchPendingCount = async () => {
+    if (!token) return;
+    try {
+      const apps = await applicationsAPI.getEmployerApplications(token);
+      const pending = apps?.filter((app: any) => app.status === 'pending').length || 0;
+      setPendingCount(pending);
+    } catch (error) {
+      console.error('Error fetching pending applications:', error);
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -123,11 +144,13 @@ export default function Navbar() {
                       <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                         <Button variant="ghost" className="relative">
                           <Bell className="w-5 h-5" />
-                          <motion.span
-                            className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50"
-                            animate={{ scale: [1, 1.3, 1] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                          />
+                          {pendingCount > 0 && (
+                            <motion.span
+                              className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50"
+                              animate={{ scale: [1, 1.3, 1] }}
+                              transition={{ duration: 1.5, repeat: Infinity }}
+                            />
+                          )}
                         </Button>
                       </motion.div>
                     </Link>
