@@ -22,11 +22,11 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="relative min-h-screen w-screen overflow-x-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <FluidBackground />
       <Navbar />
       <motion.main
-        className="relative container mx-auto px-4 pt-20 md:pt-24 lg:pt-28 pb-12"
+        className="relative w-full max-w-full px-4 pt-20 md:pt-24 lg:pt-28 pb-12 mx-auto"
         variants={pageVariants}
         initial="initial"
         animate="in"
