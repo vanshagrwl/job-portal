@@ -12,7 +12,7 @@ import EditNameModal from '../../components/EditNameModal';
 
 export default function SeekerProfilePage() {
   const { user, token, profile, updateProfile } = useAuth();
-  const [profile, setProfile] = useState<SeekerProfileType | null>(null);
+  const [seekerProfile, setSeekerProfile] = useState<SeekerProfileType | null>(null);
   const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState('');
   const [bio, setBio] = useState('');
@@ -37,7 +37,7 @@ export default function SeekerProfilePage() {
 
     try {
       const data = await profileAPI.getSeekerProfile(token);
-      setProfile(data);
+      setSeekerProfile(data);
       setSkills(data.skills || []);
       setBio(data.bio || '');
       setLocation(data.location || '');
@@ -102,7 +102,7 @@ export default function SeekerProfilePage() {
         throw new Error(updatedProfile?.error || `HTTP ${response.status}: Failed to save profile`);
       }
 
-      setProfile(updatedProfile);
+      setSeekerProfile(updatedProfile);
       setResumeUrl(updatedProfile.resume_url || '');
       setResumeFile(null);
       setResumeName('');
@@ -124,7 +124,7 @@ export default function SeekerProfilePage() {
     setEditNameLoading(true);
     try {
       const result = await profileAPI.updateSeekerProfile({ full_name: newName }, token);
-      setProfile(prev => prev ? { ...prev, full_name: newName } : null);
+      setSeekerProfile(prev => prev ? { ...prev, full_name: newName } : null);
       // Update AuthContext profile
       updateProfile({ full_name: newName });
       setEditNameOpen(false);
