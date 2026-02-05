@@ -11,7 +11,7 @@ import { Upload, FileText, X, CheckCircle, Edit2 } from 'lucide-react';
 import EditNameModal from '../../components/EditNameModal';
 
 export default function SeekerProfilePage() {
-  const { user, token, profile, updateProfile } = useAuth();
+  const { user, token, profile, updateProfile, refreshProfile } = useAuth();
   const [seekerProfile, setSeekerProfile] = useState<SeekerProfileType | null>(null);
   const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState('');
@@ -123,15 +123,16 @@ export default function SeekerProfilePage() {
 
     setEditNameLoading(true);
     try {
-      console.log('Updating profile with name:', newName);
+      console.log('Updating seeker profile with name:', newName);
       const result = await profileAPI.updateSeekerProfile({ full_name: newName }, token);
       console.log('Profile updated successfully:', result);
       setSeekerProfile(prev => prev ? { ...prev, full_name: newName } : null);
       // Update AuthContext profile
       updateProfile({ full_name: newName });
       
-      // Refetch to ensure backend is synced
-      await fetchProfile();
+      // Refresh from MongoDB to ensure we have the latest data
+      console.log('Refreshing profile from MongoDB...');
+      await refreshProfile();
       
       setEditNameOpen(false);
       alert('Name updated successfully!');

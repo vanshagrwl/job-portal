@@ -10,6 +10,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
   updateProfile: (updatedProfile: Partial<Profile>) => void;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,7 +34,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = async (authToken: string) => {
     try {
+      console.log('Fetching profile from server...');
       const profileData = await authAPI.getProfile(authToken);
+      console.log('Profile fetched successfully:', profileData.full_name);
       setUser(profileData);
       setProfile(profileData);
     } catch (error) {
@@ -85,8 +88,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(prev => prev ? { ...prev, ...updatedProfile } : null);
   };
 
+  const refreshProfile = async () => {
+    if (token) {
+      console.log('Refreshing profile from MongoDB...');
+      await fetchProfile(token);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, token, signUp, signIn, signOut, updateProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, token, signUp, signIn, signOut, updateProfile, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

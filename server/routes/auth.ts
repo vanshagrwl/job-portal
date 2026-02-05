@@ -105,14 +105,28 @@ router.post('/signin', async (req: Request, res: Response) => {
   }
 });
 
-// Get Current User Profile
+// Get Current User Profile - ALWAYS fetch from MongoDB (no caching)
 router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const profile = await Profile.findById(req.userId);
+    console.log('=== GET /auth/profile called ===');
+    console.log('User ID from token:', req.userId);
+    
+    // Always fetch fresh data from MongoDB
+    const profile = await Profile.findById(req.userId).lean();
+    
+    console.log('Profile found:', !!profile);
+    console.log('Profile data:', profile);
+    
     if (!profile) {
+      console.log('User not found for ID:', req.userId);
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Ensure we're returning the latest data
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    
     res.json(profile);
   } catch (error) {
     console.error('Get profile error:', error);
@@ -120,7 +134,7 @@ router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
   }
 });
 
-// Update User's Full Name
+// Update User's Full Name - Direct MongoDB update
 router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     console.log('=== PUT /auth/profile called ===');
@@ -131,7 +145,7 @@ router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
 
     if (!full_name || full_name.trim() === '') {
       console.log('Validation failed: empty full_name');
-      return res.status(400).json({ error: 'Full name is required' });
+      return res.status(400).json({ error: 'Full name is required and cannot be empty' });
     }
 
     if (!req.userId) {
@@ -139,31 +153,44 @@ router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
       return res.status(401).json({ error: 'User not authenticated' });
     }
 
-    console.log('Updating profile for user:', req.userId);
+    console.log('Attempting to update user:', req.userId, 'with name:', full_name.trim());
     
+    // Use findByIdAndUpdate with upsert to ensure immediate MongoDB persistence
     const updatedProfile = await Profile.findByIdAndUpdate(
       req.userId,
-      { full_name: full_name.trim(), updated_at: new Date() },
-      { new: true }
+      { 
+        full_name: full_name.trim(),
+        updated_at: new Date()
+      },
+      { 
+        new: true,  // Return the updated document
+        runValidators: true  // Run schema validators
+      }
     );
 
     if (!updatedProfile) {
-      console.log('User not found:', req.userId);
-      return res.status(404).json({ error: 'User not found' });
+      console.log('ERROR: User not found after update attempt:', req.userId);
+      return res.status(404).json({ error: 'User profile not found in database' });
     }
 
-    console.log('Profile updated successfully');
-    console.log('Updated profile:', updatedProfile);
+    console.log('✓ Profile updated successfully in MongoDB');
+    console.log('Updated profile full_name:', updatedProfile.full_name);
+    
+    // Disable caching to ensure client gets fresh data
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     
     res.json(updatedProfile);
   } catch (error: any) {
     console.error('=== PUT /auth/profile ERROR ===');
     console.error('Error name:', error.name);
     console.error('Error message:', error.message);
-    console.error('Error:', error);
+    console.error('Stack:', error.stack);
+    
     res.status(500).json({ 
       error: error.message || 'Failed to update profile',
-      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      errorType: error.name
     });
   }
 });

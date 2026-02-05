@@ -11,7 +11,7 @@ import { Building, Globe, MapPin, Edit2 } from 'lucide-react';
 import EditNameModal from '../../components/EditNameModal';
 
 export default function EmployerProfilePage() {
-  const { user, token, profile, updateProfile } = useAuth();
+  const { user, token, profile, updateProfile, refreshProfile } = useAuth();
   const [employerProfile, setEmployerProfile] = useState<EmployerProfileType | null>(null);
   const [companyName, setCompanyName] = useState('');
   const [about, setAbout] = useState('');
@@ -92,15 +92,16 @@ export default function EmployerProfilePage() {
     setEditNameLoading(true);
     try {
       // Update the user's personal full_name using the profile endpoint
-      console.log('Updating profile with name:', newName);
+      console.log('Updating employer profile with name:', newName);
       const result = await profileAPI.updateEmployerProfile({ full_name: newName }, token);
       console.log('Profile updated successfully:', result);
       
       // Update local state and AuthContext
       updateProfile({ full_name: newName });
       
-      // Refetch to ensure backend is synced
-      await fetchProfile();
+      // Refresh from MongoDB to ensure we have the latest data
+      console.log('Refreshing profile from MongoDB...');
+      await refreshProfile();
       
       setEditNameOpen(false);
       alert('Name updated successfully!');

@@ -73,19 +73,34 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
     // If full_name is provided, also update the Profile table
     if (full_name !== undefined && full_name.trim() !== '') {
       try {
-        console.log('Updating full_name in Profile table to:', full_name);
+        console.log('Updating Profile.full_name for user:', req.userId);
+        console.log('New name:', full_name.trim());
+        
+        // Use atomic update to ensure MongoDB persistence
         const userProfile = await Profile.findByIdAndUpdate(
           req.userId,
-          { full_name: full_name.trim(), updated_at: new Date() },
-          { new: true }
+          { 
+            full_name: full_name.trim(), 
+            updated_at: new Date() 
+          },
+          { 
+            new: true,
+            runValidators: true
+          }
         );
-        console.log('Profile full_name updated successfully:', userProfile?.full_name);
+        
         if (!userProfile) {
-          throw new Error('Failed to update profile');
+          throw new Error('User profile not found for update');
         }
+        
+        console.log('✓ Profile.full_name updated successfully');
+        console.log('Verification - Updated full_name in DB:', userProfile.full_name);
       } catch (updateError: any) {
-        console.error('Error updating Profile full_name:', updateError);
-        return res.status(500).json({ error: 'Failed to update name: ' + updateError.message });
+        console.error('ERROR: Failed to update Profile.full_name:', updateError);
+        return res.status(500).json({ 
+          error: 'Failed to update name: ' + updateError.message,
+          details: updateError.message
+        });
       }
     }
     
@@ -145,19 +160,34 @@ router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
     // If full_name is provided, also update the Profile table (personal name, not company name)
     if (full_name !== undefined && full_name.trim() !== '') {
       try {
-        console.log('Updating full_name in Profile table to:', full_name);
+        console.log('Updating Profile.full_name for user:', req.userId);
+        console.log('New name:', full_name.trim());
+        
+        // Use atomic update to ensure MongoDB persistence
         const userProfile = await Profile.findByIdAndUpdate(
           req.userId,
-          { full_name: full_name.trim(), updated_at: new Date() },
-          { new: true }
+          { 
+            full_name: full_name.trim(), 
+            updated_at: new Date() 
+          },
+          { 
+            new: true,
+            runValidators: true
+          }
         );
-        console.log('Profile full_name updated successfully:', userProfile?.full_name);
+        
         if (!userProfile) {
-          throw new Error('Failed to update profile');
+          throw new Error('User profile not found for update');
         }
+        
+        console.log('✓ Profile.full_name updated successfully');
+        console.log('Verification - Updated full_name in DB:', userProfile.full_name);
       } catch (updateError: any) {
-        console.error('Error updating Profile full_name:', updateError);
-        return res.status(500).json({ error: 'Failed to update name: ' + updateError.message });
+        console.error('ERROR: Failed to update Profile.full_name:', updateError);
+        return res.status(500).json({ 
+          error: 'Failed to update name: ' + updateError.message,
+          details: updateError.message
+        });
       }
     }
     
