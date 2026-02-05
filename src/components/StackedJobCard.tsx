@@ -20,12 +20,10 @@ export default function StackedJobCard({
 }: StackedJobCardProps) {
   const motionCfg = useMotionConfig();
 
-  const initialX = index % 2 === 0 ? (motionCfg.isSmall ? 30 : 60) : (motionCfg.isSmall ? -30 : -60);
-
   return (
     <motion.div
-      // Use shared motion config but keep alternating side entrance for visual interest
-      initial={{ opacity: 0, x: initialX, scale: 0.98 }}
+      // Simple fade-in, no side sliding
+      initial={motionCfg.cardInitial}
       animate={motionCfg.cardAnimate}
       transition={{
         delay: index * motionCfg.listStagger,

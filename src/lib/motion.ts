@@ -29,13 +29,13 @@ export function useMotionConfig() {
   const isSmall = width < 640; // mobile
   const isMedium = width >= 640 && width < 1024;
 
-  const cardDistance = isSmall ? 20 : isMedium ? 40 : 60;
+  // Simplified: fade-in only (no side animations)
   const cardTransition = reduce
     ? { duration: 0 }
-    : { type: 'spring', stiffness: 250, damping: 22, mass: 1 };
+    : { type: 'tween', ease: 'easeOut', duration: 0.4 };
 
-  const cardInitial = reduce ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: cardDistance, y: 0 };
-  const cardAnimate = { opacity: 1, x: 0, y: 0 };
+  const cardInitial = { opacity: 0 };
+  const cardAnimate = { opacity: 1 };
 
   const pageTransition = reduce ? { duration: 0 } : { type: 'tween', ease: 'easeInOut', duration: 0.5 };
   const pageVariants = reduce
@@ -48,7 +48,6 @@ export function useMotionConfig() {
     reduce,
     isSmall,
     isMedium,
-    cardDistance,
     cardInitial,
     cardAnimate,
     cardTransition,

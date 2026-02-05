@@ -28,15 +28,16 @@ export default function AnimatedList({ children, component = 'div', className = 
 
   const Comp: any = motion[component as keyof typeof motion] || motion.div;
 
+  // Ensure children is an array for mapping
+  const childArray = Array.isArray(children) ? children : [children];
+
   return (
     <Comp variants={containerVariants} initial="hidden" animate="visible" className={className}>
-      {Array.isArray(children)
-        ? children.map((child: any, idx: number) => (
-            <motion.div key={idx} variants={itemVariants} className="w-full">
-              {child}
-            </motion.div>
-          ))
-        : <motion.div variants={itemVariants}>{children}</motion.div>}
+      {childArray.map((child: any, idx: number) => (
+        <motion.div key={idx} variants={itemVariants} className="w-full">
+          {child}
+        </motion.div>
+      ))}
     </Comp>
   );
 }
