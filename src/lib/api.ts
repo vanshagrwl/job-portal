@@ -141,6 +141,8 @@ export const authAPI = {
 
   updateProfile: async (fullName: string, token: string) => {
     try {
+      console.log('Calling updateProfile with token:', token ? token.substring(0, 20) + '...' : 'NO TOKEN');
+      
       const response = await fetch(`${API_URL}/auth/profile`, {
         method: 'PUT',
         headers: {
@@ -150,17 +152,32 @@ export const authAPI = {
         body: JSON.stringify({ full_name: fullName })
       });
       
-      const text = await response.text();
-      let data;
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
       
+      const text = await response.text();
+      console.log('Response text:', text.substring(0, 200));
+      
+      if (!response.ok) {
+        console.error('Response is not OK. Status:', response.status, 'Text:', text);
+        // Try to parse as JSON error
+        try {
+          const errorData = JSON.parse(text);
+          throw new Error(errorData.error || `Server error: ${response.status}`);
+        } catch (parseError) {
+          throw new Error(`Server error ${response.status}: ${text.substring(0, 100)}`);
+        }
+      }
+      
+      let data;
       try {
         data = JSON.parse(text);
       } catch (e) {
-        console.error('Failed to parse response:', text);
-        throw new Error('Server returned invalid response');
+        console.error('Failed to parse success response:', text);
+        throw new Error('Invalid response format from server');
       }
       
-      if (!response.ok) throw new Error(data.error || 'Failed to update profile');
+      console.log('Profile update successful:', data);
       return data;
     } catch (error: any) {
       console.error('updateProfile error:', error);
