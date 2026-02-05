@@ -123,28 +123,48 @@ router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
 // Update User's Full Name
 router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
+    console.log('=== PUT /auth/profile called ===');
+    console.log('User ID:', req.userId);
+    console.log('Request body:', req.body);
+
     const { full_name } = req.body;
 
     if (!full_name || full_name.trim() === '') {
+      console.log('Validation failed: empty full_name');
       return res.status(400).json({ error: 'Full name is required' });
     }
 
-    console.log('Updating profile for user:', req.userId);
-    console.log('New full name:', full_name);
+    if (!req.userId) {
+      console.log('Error: No userId in request');
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
 
+    console.log('Looking for user:', req.userId);
     const profile = await Profile.findById(req.userId);
+    
     if (!profile) {
+      console.log('User not found:', req.userId);
       return res.status(404).json({ error: 'User not found' });
     }
 
+    console.log('User found, updating name from:', profile.full_name, 'to:', full_name.trim());
+    
     profile.full_name = full_name.trim();
     const updatedProfile = await profile.save();
 
-    console.log('Profile updated successfully');
+    console.log('Profile saved successfully');
+    console.log('Updated profile:', updatedProfile);
+    
     res.json(updatedProfile);
   } catch (error: any) {
-    console.error('Update profile error:', error);
-    res.status(500).json({ error: error.message || 'Failed to update profile' });
+    console.error('=== PUT /auth/profile ERROR ===');
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error:', error);
+    res.status(500).json({ 
+      error: error.message || 'Failed to update profile',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
