@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { EmployerProfile as EmployerProfileType, profileAPI } from '../../lib/api';
+import { EmployerProfile as EmployerProfileType, profileAPI, authAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
@@ -11,8 +11,8 @@ import { Building, Globe, MapPin, Edit2 } from 'lucide-react';
 import EditNameModal from '../../components/EditNameModal';
 
 export default function EmployerProfilePage() {
-  const { user, token, updateProfile } = useAuth();
-  const [profile, setProfile] = useState<EmployerProfileType | null>(null);
+  const { user, token, profile, updateProfile } = useAuth();
+  const [employerProfile, setEmployerProfile] = useState<EmployerProfileType | null>(null);
   const [companyName, setCompanyName] = useState('');
   const [about, setAbout] = useState('');
   const [industry, setIndustry] = useState('');
@@ -36,7 +36,7 @@ export default function EmployerProfilePage() {
 
     try {
       const data = await profileAPI.getEmployerProfile(token);
-      setProfile(data);
+      setEmployerProfile(data);
       setCompanyName(data.company_name || '');
       setAbout(data.about_company || '');
       setIndustry(data.industry || '');
@@ -89,12 +89,14 @@ export default function EmployerProfilePage() {
 
     setEditNameLoading(true);
     try {
-      const result = await profileAPI.updateEmployerProfile({ company_name: newName }, token);
-      setCompanyName(newName);
-      setProfile(prev => prev ? { ...prev, company_name: newName } : null);
-      // Update AuthContext profile - ONLY company_name, not full_name
-      updateProfile({ company_name: newName });
+      // Update the user's personal full_name using authAPI
+      const result = await authAPI.updateProfile(newName, token);
+      
+      // Update local state and AuthContext
+      updateProfile({ full_name: newName });
       setEditNameOpen(false);
+      // Refetch to ensure backend is synced
+      await fetchProfile();
     } catch (error: any) {
       console.error('Error updating name:', error);
       throw new Error(error.message || 'Failed to update name');
@@ -237,11 +239,11 @@ export default function EmployerProfilePage() {
       <EditNameModal
         isOpen={editNameOpen}
         onClose={() => setEditNameOpen(false)}
-        currentName={companyName}
+        currentName={profile?.full_name || ''}
         onSave={handleSaveName}
         loading={editNameLoading}
-        title="Edit Company Name"
-        label="Company Name"
+        title="Edit Your Name"
+        label="Full Name"
       />
     </Layout>
   );

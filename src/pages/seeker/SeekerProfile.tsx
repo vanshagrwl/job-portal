@@ -128,6 +128,8 @@ export default function SeekerProfilePage() {
       // Update AuthContext profile
       updateProfile({ full_name: newName });
       setEditNameOpen(false);
+      // Refetch to ensure backend is synced
+      await fetchProfile();
     } catch (error: any) {
       console.error('Error updating name:', error);
       throw new Error(error.message || 'Failed to update name');
