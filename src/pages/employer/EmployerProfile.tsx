@@ -11,7 +11,7 @@ import { Building, Globe, MapPin, Edit2 } from 'lucide-react';
 import EditNameModal from '../../components/EditNameModal';
 
 export default function EmployerProfilePage() {
-  const { user, token } = useAuth();
+  const { user, token, updateProfile } = useAuth();
   const [profile, setProfile] = useState<EmployerProfileType | null>(null);
   const [companyName, setCompanyName] = useState('');
   const [about, setAbout] = useState('');
@@ -89,9 +89,11 @@ export default function EmployerProfilePage() {
 
     setEditNameLoading(true);
     try {
-      await profileAPI.updateEmployerProfile({ company_name: newName }, token);
+      const result = await profileAPI.updateEmployerProfile({ company_name: newName }, token);
       setCompanyName(newName);
       setProfile(prev => prev ? { ...prev, company_name: newName } : null);
+      // Update AuthContext profile
+      updateProfile({ company_name: newName, full_name: newName });
       setEditNameOpen(false);
     } catch (error: any) {
       console.error('Error updating name:', error);

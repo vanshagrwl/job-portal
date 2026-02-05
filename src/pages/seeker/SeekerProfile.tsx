@@ -11,7 +11,7 @@ import { Upload, FileText, X, CheckCircle, Edit2 } from 'lucide-react';
 import EditNameModal from '../../components/EditNameModal';
 
 export default function SeekerProfilePage() {
-  const { user, token } = useAuth();
+  const { user, token, profile, updateProfile } = useAuth();
   const [profile, setProfile] = useState<SeekerProfileType | null>(null);
   const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState('');
@@ -123,8 +123,10 @@ export default function SeekerProfilePage() {
 
     setEditNameLoading(true);
     try {
-      await profileAPI.updateSeekerProfile({ full_name: newName }, token);
+      const result = await profileAPI.updateSeekerProfile({ full_name: newName }, token);
       setProfile(prev => prev ? { ...prev, full_name: newName } : null);
+      // Update AuthContext profile
+      updateProfile({ full_name: newName });
       setEditNameOpen(false);
     } catch (error: any) {
       console.error('Error updating name:', error);

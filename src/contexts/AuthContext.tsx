@@ -9,6 +9,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string, role: UserRole, companyName?: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
+  updateProfile: (updatedProfile: Partial<Profile>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -79,8 +80,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(null);
   };
 
+  const updateProfile = (updatedProfile: Partial<Profile>) => {
+    setUser(prev => prev ? { ...prev, ...updatedProfile } : null);
+    setProfile(prev => prev ? { ...prev, ...updatedProfile } : null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, token, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, profile, loading, token, signUp, signIn, signOut, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
