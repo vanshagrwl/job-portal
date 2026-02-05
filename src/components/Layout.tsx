@@ -12,11 +12,11 @@ export default function Layout({ children }: LayoutProps) {
 
   const pageVariants = shouldReduceMotion
     ? { initial: { opacity: 1, y: 0 }, in: { opacity: 1, y: 0 }, out: { opacity: 1, y: 0 } }
-    : { initial: { opacity: 0, y: 10 }, in: { opacity: 1, y: 0 }, out: { opacity: 0, y: -10 } };
+    : { initial: { opacity: 0, y: 15 }, in: { opacity: 1, y: 0 }, out: { opacity: 0, y: -15 } };
 
   const pageTransition = shouldReduceMotion
     ? { duration: 0 }
-    : { type: 'tween', ease: 'easeOut', duration: 0.28 };
+    : { type: 'tween', ease: 'easeInOut', duration: 0.4 };
 
   return (
     <div className="relative w-full min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">

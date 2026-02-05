@@ -36,9 +36,9 @@ export default function Button({
   return (
     <motion.button
       className={`${baseStyles} ${variantStyles} ${className}`}
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 280, damping: 25, mass: 1.2 }}
       {...props}
     >
       {/* Liquid Fill Effect - Background layer that fills on hover */}

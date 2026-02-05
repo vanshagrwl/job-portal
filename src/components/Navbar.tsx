@@ -22,8 +22,9 @@ export default function Navbar() {
       opacity: 1,
       transition: {
         type: 'spring' as const,
-        stiffness: 100,
-        damping: 15,
+        stiffness: 80,
+        damping: 18,
+        mass: 1.1,
       },
     },
   };
@@ -34,9 +35,11 @@ export default function Navbar() {
       opacity: 1,
       y: 0,
       transition: {
-        delay: i * 0.1,
+        delay: i * 0.12,
         type: 'spring' as const,
-        stiffness: 300,
+        stiffness: 250,
+        damping: 22,
+        mass: 1.0,
       },
     }),
   };
