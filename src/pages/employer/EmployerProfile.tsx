@@ -89,7 +89,7 @@ export default function EmployerProfilePage() {
 
     setEditNameLoading(true);
     try {
-      const result = await profileAPI.updateProfile(token, { full_name: newName });
+      await profileAPI.updateEmployerProfile({ company_name: newName }, token);
       setCompanyName(newName);
       setProfile(prev => prev ? { ...prev, company_name: newName } : null);
       setEditNameOpen(false);

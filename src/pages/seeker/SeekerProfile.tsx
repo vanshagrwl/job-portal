@@ -123,7 +123,7 @@ export default function SeekerProfilePage() {
 
     setEditNameLoading(true);
     try {
-      await profileAPI.updateProfile(token, { full_name: newName });
+      await profileAPI.updateSeekerProfile({ full_name: newName }, token);
       setProfile(prev => prev ? { ...prev, full_name: newName } : null);
       setEditNameOpen(false);
     } catch (error: any) {
