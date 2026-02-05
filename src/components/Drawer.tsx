@@ -61,7 +61,7 @@ export default function Drawer({
               stiffness: 300,
               damping: 30,
             }}
-            className={`fixed top-0 ${position}-0 h-full bg-white shadow-2xl z-[70] flex flex-col overflow-hidden w-full sm:w-80 md:w-96 lg:w-[420px]`}
+            className={`fixed top-0 ${position}-0 h-full bg-white shadow-2xl z-[70] flex flex-col overflow-hidden w-64 sm:w-72 md:w-80 lg:w-96`}
           >
             {/* Header */}
             <div className={`${headerBg} p-4 sm:p-5 md:p-6 flex items-center justify-between text-white flex-shrink-0`}>
