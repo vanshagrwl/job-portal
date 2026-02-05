@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -36,6 +36,29 @@ export default function Drawer({
   const headerBg = theme === 'employer'
     ? 'bg-gradient-employer'
     : 'bg-gradient-seeker';
+
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight;
+
+    if (isOpen) {
+      // Prevent background from scrolling while drawer is open.
+      // Also compensate for scrollbar width to avoid layout shift.
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = originalOverflow || '';
+      document.body.style.paddingRight = originalPaddingRight || '';
+    }
+
+    return () => {
+      document.body.style.overflow = originalOverflow || '';
+      document.body.style.paddingRight = originalPaddingRight || '';
+    };
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
@@ -77,7 +100,7 @@ export default function Drawer({
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4" style={{ WebkitOverflowScrolling: 'touch' }}>
               {children}
             </div>
           </motion.div>
@@ -86,3 +109,7 @@ export default function Drawer({
     </AnimatePresence>
   );
 }
+
+// Lock background scrolling when the drawer is open
+// We add a small helper to toggle body scroll when `isOpen` changes.
+// Move this logic inside the component so it runs with the proper `isOpen`.
