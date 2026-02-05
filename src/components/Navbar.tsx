@@ -168,35 +168,44 @@ export default function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden mt-3 pt-3 border-t border-white/10 space-y-2 flex flex-col"
           >
+            {/* Mobile menu items: stacked icon above label for a clean, consistent look */}
             {profile?.role === 'seeker' && (
               <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                <Button variant="ghost" className="w-full flex items-center justify-center space-x-3 text-sm py-3 px-4 hover:bg-white/5">
-                  <User className="w-5 h-5 flex-shrink-0" />
-                  <span>Profile</span>
+                <Button variant="ghost" className="w-full py-3 px-4 hover:bg-white/5">
+                  <div className="flex flex-col items-center gap-1">
+                    <User className="w-6 h-6" />
+                    <span className="text-sm">Profile</span>
+                  </div>
                 </Button>
               </Link>
             )}
 
             {profile?.role === 'employer' && (
               <Link to="/employer-profile" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                <Button variant="ghost" className="w-full flex items-center justify-center space-x-3 text-sm py-3 px-4 hover:bg-white/5">
-                  <User className="w-5 h-5 flex-shrink-0" />
-                  <span>Profile</span>
+                <Button variant="ghost" className="w-full py-3 px-4 hover:bg-white/5">
+                  <div className="flex flex-col items-center gap-1">
+                    <User className="w-6 h-6" />
+                    <span className="text-sm">Profile</span>
+                  </div>
                 </Button>
               </Link>
             )}
 
             <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="w-full">
-              <Button variant="ghost" className="w-full flex items-center justify-center text-sm py-3 px-4 hover:bg-white/5">
-                <span className="truncate">{profile?.full_name}</span>
+              <Button variant="ghost" className="w-full py-3 px-4 hover:bg-white/5">
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-sm truncate max-w-[160px] text-center">{profile?.full_name}</span>
+                </div>
               </Button>
             </Link>
 
             {profile?.role === 'employer' && (
               <Link to="/employer-applications" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                <Button variant="ghost" className="w-full flex items-center justify-center space-x-3 text-sm py-3 px-4 hover:bg-white/5">
-                  <Bell className="w-5 h-5 flex-shrink-0" />
-                  <span>Applications</span>
+                <Button variant="ghost" className="w-full py-3 px-4 hover:bg-white/5">
+                  <div className="flex flex-col items-center gap-1">
+                    <Bell className="w-6 h-6" />
+                    <span className="text-sm">Applications</span>
+                  </div>
                 </Button>
               </Link>
             )}
@@ -207,10 +216,12 @@ export default function Navbar() {
                 handleSignOut();
                 setMobileMenuOpen(false);
               }}
-              className="w-full flex items-center justify-center space-x-3 text-sm py-3 px-4"
+              className="w-full py-3 px-4"
             >
-              <LogOut className="w-5 h-5 flex-shrink-0" />
-              <span>Sign Out</span>
+              <div className="flex flex-col items-center gap-1">
+                <LogOut className="w-6 h-6" />
+                <span className="text-sm">Sign Out</span>
+              </div>
             </Button>
           </motion.div>
         )}

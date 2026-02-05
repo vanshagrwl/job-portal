@@ -321,11 +321,11 @@ export default function JobEdit() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex space-x-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Button
                 onClick={handleSave}
                 disabled={saving || deleting}
-                className="flex-1 flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                className="w-full sm:flex-1 flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
                 <span>{saving ? 'Saving...' : 'Save Changes'}</span>
@@ -333,7 +333,7 @@ export default function JobEdit() {
               <Button
                 onClick={handleDelete}
                 disabled={saving || deleting}
-                className="flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 px-6"
+                className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 px-6"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>{deleting ? 'Deleting...' : 'Delete Job'}</span>
