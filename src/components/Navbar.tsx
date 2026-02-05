@@ -195,10 +195,10 @@ export default function Navbar() {
                 handleSignOut();
                 setMobileMenuOpen(false);
               }}
-              className="w-full flex items-center justify-start space-x-3 text-sm py-2 px-4"
+              className="w-full flex items-center justify-start space-x-3 text-sm py-2 px-4 text-center"
             >
               <LogOut className="w-5 h-5 flex-shrink-0" />
-              <span>Sign Out</span>
+              <span className="flex-1 text-left">Sign Out</span>
             </Button>
           </motion.div>
         )}
