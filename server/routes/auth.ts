@@ -139,20 +139,20 @@ router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
       return res.status(401).json({ error: 'User not authenticated' });
     }
 
-    console.log('Looking for user:', req.userId);
-    const profile = await Profile.findById(req.userId);
+    console.log('Updating profile for user:', req.userId);
     
-    if (!profile) {
+    const updatedProfile = await Profile.findByIdAndUpdate(
+      req.userId,
+      { full_name: full_name.trim(), updated_at: new Date() },
+      { new: true }
+    );
+
+    if (!updatedProfile) {
       console.log('User not found:', req.userId);
       return res.status(404).json({ error: 'User not found' });
     }
 
-    console.log('User found, updating name from:', profile.full_name, 'to:', full_name.trim());
-    
-    profile.full_name = full_name.trim();
-    const updatedProfile = await profile.save();
-
-    console.log('Profile saved successfully');
+    console.log('Profile updated successfully');
     console.log('Updated profile:', updatedProfile);
     
     res.json(updatedProfile);

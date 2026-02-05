@@ -71,21 +71,29 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
     }
     
     // If full_name is provided, also update the Profile table
-    if (full_name !== undefined) {
-      console.log('Updating full_name in Profile table to:', full_name);
-      const userProfile = await Profile.findById(req.userId);
-      if (userProfile) {
-        userProfile.full_name = full_name;
-        await userProfile.save();
-        console.log('Profile full_name updated successfully');
+    if (full_name !== undefined && full_name.trim() !== '') {
+      try {
+        console.log('Updating full_name in Profile table to:', full_name);
+        const userProfile = await Profile.findByIdAndUpdate(
+          req.userId,
+          { full_name: full_name.trim(), updated_at: new Date() },
+          { new: true }
+        );
+        console.log('Profile full_name updated successfully:', userProfile?.full_name);
+        if (!userProfile) {
+          throw new Error('Failed to update profile');
+        }
+      } catch (updateError: any) {
+        console.error('Error updating Profile full_name:', updateError);
+        return res.status(500).json({ error: 'Failed to update name: ' + updateError.message });
       }
     }
     
     profile.updated_at = new Date();
-    console.log('Profile before save:', profile);
+    console.log('Seeker profile before save:', profile);
     const savedProfile = await profile.save();
     
-    console.log('Seeker profile saved successfully');
+    console.log('Seeker profile saved successfully:', savedProfile);
     const response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
     res.json(response);
   } catch (error: any) {
@@ -135,13 +143,21 @@ router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
     if (phone !== undefined) profile.phone = phone;
     
     // If full_name is provided, also update the Profile table (personal name, not company name)
-    if (full_name !== undefined) {
-      console.log('Updating full_name in Profile table to:', full_name);
-      const userProfile = await Profile.findById(req.userId);
-      if (userProfile) {
-        userProfile.full_name = full_name;
-        await userProfile.save();
-        console.log('Profile full_name updated successfully');
+    if (full_name !== undefined && full_name.trim() !== '') {
+      try {
+        console.log('Updating full_name in Profile table to:', full_name);
+        const userProfile = await Profile.findByIdAndUpdate(
+          req.userId,
+          { full_name: full_name.trim(), updated_at: new Date() },
+          { new: true }
+        );
+        console.log('Profile full_name updated successfully:', userProfile?.full_name);
+        if (!userProfile) {
+          throw new Error('Failed to update profile');
+        }
+      } catch (updateError: any) {
+        console.error('Error updating Profile full_name:', updateError);
+        return res.status(500).json({ error: 'Failed to update name: ' + updateError.message });
       }
     }
     
