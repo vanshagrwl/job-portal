@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Button from './Button';
 import { Briefcase, User, LogOut, Bell, Menu, X } from 'lucide-react';
@@ -9,16 +9,24 @@ import { applicationsAPI } from '../lib/api';
 export default function Navbar() {
   const { user, profile, signOut, token } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
     if (profile?.role === 'employer' && token) {
       fetchPendingCount();
-      const interval = setInterval(fetchPendingCount, 5000);
+      const interval = setInterval(fetchPendingCount, 3000); // Refetch every 3 seconds
       return () => clearInterval(interval);
     }
   }, [profile?.role, token]);
+
+  // Refetch when user navigates back from applications page
+  useEffect(() => {
+    if (profile?.role === 'employer' && token && location.pathname !== '/employer-applications') {
+      fetchPendingCount();
+    }
+  }, [location.pathname, profile?.role, token]);
 
   const fetchPendingCount = async () => {
     if (!token) return;
