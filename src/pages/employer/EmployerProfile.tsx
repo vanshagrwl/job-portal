@@ -92,21 +92,27 @@ export default function EmployerProfilePage() {
     setEditNameLoading(true);
     try {
       // Update the user's personal full_name using the profile endpoint
-      console.log('Updating employer profile with name:', newName);
+      console.log('=== Updating employer profile with name:', newName);
       const result = await profileAPI.updateEmployerProfile({ full_name: newName }, token);
-      console.log('Profile updated successfully:', result);
+      console.log('✓ API response received:', result);
       
-      // Update local state and AuthContext
+      // Update local employer profile state
+      setEmployerProfile(prev => prev ? { ...prev, full_name: newName } : null);
+      console.log('✓ Local employerProfile state updated');
+      
+      // Update AuthContext
       updateProfile({ full_name: newName });
+      console.log('✓ AuthContext profile updated');
       
       // Refresh from MongoDB to ensure we have the latest data
-      console.log('Refreshing profile from MongoDB...');
+      console.log('✓ Refreshing profile from MongoDB...');
       await refreshProfile();
+      console.log('✓ Profile refreshed from MongoDB');
       
       setEditNameOpen(false);
       alert('Name updated successfully!');
     } catch (error: any) {
-      console.error('Error updating name:', error.message);
+      console.error('❌ Error updating name:', error.message);
       throw new Error(error.message || 'Failed to update name. Please try again.');
     } finally {
       setEditNameLoading(false);

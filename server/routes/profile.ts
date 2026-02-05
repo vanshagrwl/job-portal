@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { Profile } from '../models/Profile';
 import { SeekerProfile } from '../models/SeekerProfile';
 import { EmployerProfile } from '../models/EmployerProfile';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
@@ -109,7 +110,17 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
     const savedProfile = await profile.save();
     
     console.log('Seeker profile saved successfully:', savedProfile);
-    const response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
+    let response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
+    
+    // If full_name was updated, fetch the latest Profile to include it in response
+    if (full_name !== undefined) {
+      const userProfile = await Profile.findById(req.userId);
+      if (userProfile) {
+        response.full_name = userProfile.full_name;
+        console.log('✓ Response includes full_name:', response.full_name);
+      }
+    }
+    
     res.json(response);
   } catch (error: any) {
     console.error('Error updating seeker profile:', error);
@@ -194,7 +205,17 @@ router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
     profile.updated_at = new Date();
     const savedProfile = await profile.save();
 
-    const response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
+    // If full_name was updated, fetch the latest Profile to include it in response
+    let response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
+    
+    if (full_name !== undefined) {
+      const userProfile = await Profile.findById(req.userId);
+      if (userProfile) {
+        response.full_name = userProfile.full_name;
+        console.log('✓ Response includes full_name:', response.full_name);
+      }
+    }
+    
     res.json(response);
   } catch (error: any) {
     console.error('Error updating employer profile:', error);

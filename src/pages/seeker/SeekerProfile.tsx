@@ -123,21 +123,27 @@ export default function SeekerProfilePage() {
 
     setEditNameLoading(true);
     try {
-      console.log('Updating seeker profile with name:', newName);
+      console.log('=== Updating seeker profile with name:', newName);
       const result = await profileAPI.updateSeekerProfile({ full_name: newName }, token);
-      console.log('Profile updated successfully:', result);
+      console.log('✓ API response received:', result);
+      
+      // Update local seeker profile state
       setSeekerProfile(prev => prev ? { ...prev, full_name: newName } : null);
+      console.log('✓ Local seekerProfile state updated');
+      
       // Update AuthContext profile
       updateProfile({ full_name: newName });
+      console.log('✓ AuthContext profile updated');
       
       // Refresh from MongoDB to ensure we have the latest data
-      console.log('Refreshing profile from MongoDB...');
+      console.log('✓ Refreshing profile from MongoDB...');
       await refreshProfile();
+      console.log('✓ Profile refreshed from MongoDB');
       
       setEditNameOpen(false);
       alert('Name updated successfully!');
     } catch (error: any) {
-      console.error('Error updating name:', error);
+      console.error('❌ Error updating name:', error);
       throw new Error(error.message || 'Failed to update name');
     } finally {
       setEditNameLoading(false);

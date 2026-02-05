@@ -45,6 +45,7 @@ export interface Profile {
 export interface SeekerProfile {
   _id?: string;
   user_id: string;
+  full_name?: string;
   skills: string[];
   education: any[];
   experience: any[];
@@ -59,6 +60,7 @@ export interface SeekerProfile {
 export interface EmployerProfile {
   _id?: string;
   user_id: string;
+  full_name?: string;
   company_name: string;
   company_logo_url?: string;
   about_company?: string;
