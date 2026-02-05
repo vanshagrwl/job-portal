@@ -7,7 +7,8 @@ import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import PhoneInput from '../../components/PhoneInput';
-import { Upload, FileText, X, CheckCircle } from 'lucide-react';
+import { Upload, FileText, X, CheckCircle, Edit2 } from 'lucide-react';
+import EditNameModal from '../../components/EditNameModal';
 
 export default function SeekerProfilePage() {
   const { user, token } = useAuth();
@@ -22,6 +23,8 @@ export default function SeekerProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [resumeName, setResumeName] = useState('');
+  const [editNameOpen, setEditNameOpen] = useState(false);
+  const [editNameLoading, setEditNameLoading] = useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -113,6 +116,24 @@ export default function SeekerProfilePage() {
     }
   };
 
+  const handleSaveName = async (newName: string) => {
+    if (!newName.trim() || !token) {
+      throw new Error('Please enter a valid name');
+    }
+
+    setEditNameLoading(true);
+    try {
+      await profileAPI.updateProfile(token, { full_name: newName });
+      setProfile(prev => prev ? { ...prev, full_name: newName } : null);
+      setEditNameOpen(false);
+    } catch (error: any) {
+      console.error('Error updating name:', error);
+      throw new Error(error.message || 'Failed to update name');
+    } finally {
+      setEditNameLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -159,8 +180,19 @@ export default function SeekerProfilePage() {
       >
         {/* Header Section */}
         <motion.div variants={itemVariants} className="mb-8">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">My Profile</h1>
-          <p className="text-gray-400 text-sm sm:text-base">Keep your profile updated to attract employers</p>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">My Profile</h1>
+              <p className="text-gray-400 text-sm sm:text-base">Keep your profile updated to attract employers</p>
+            </div>
+            <button
+              onClick={() => setEditNameOpen(true)}
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 hover:text-blue-300 transition-colors text-sm border border-blue-500/30 hover:border-blue-500/50 whitespace-nowrap"
+            >
+              <Edit2 className="w-4 h-4" />
+              <span>Edit Name</span>
+            </button>
+          </div>
         </motion.div>
 
         {/* Main Card */}
@@ -330,6 +362,15 @@ export default function SeekerProfilePage() {
           </GlassCard>
         </motion.div>
       </motion.div>
+
+      {/* Edit Name Modal */}
+      <EditNameModal
+        isOpen={editNameOpen}
+        onClose={() => setEditNameOpen(false)}
+        currentName={profile?.full_name || ''}
+        onSave={handleSaveName}
+        loading={editNameLoading}
+      />
     </Layout>
   );
 }

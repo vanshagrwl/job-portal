@@ -7,7 +7,8 @@ import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import PhoneInput from '../../components/PhoneInput';
-import { Building, Globe, MapPin } from 'lucide-react';
+import { Building, Globe, MapPin, Edit2 } from 'lucide-react';
+import EditNameModal from '../../components/EditNameModal';
 
 export default function EmployerProfilePage() {
   const { user, token } = useAuth();
@@ -21,6 +22,8 @@ export default function EmployerProfilePage() {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editNameOpen, setEditNameOpen] = useState(false);
+  const [editNameLoading, setEditNameLoading] = useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -81,6 +84,23 @@ export default function EmployerProfilePage() {
     }
   };
 
+  const handleSaveName = async (newName: string) => {
+    if (!user || !token) return;
+
+    setEditNameLoading(true);
+    try {
+      const result = await profileAPI.updateProfile(token, { full_name: newName });
+      setCompanyName(newName);
+      setProfile(prev => prev ? { ...prev, company_name: newName } : null);
+      setEditNameOpen(false);
+    } catch (error: any) {
+      console.error('Error updating name:', error);
+      throw new Error(error.message || 'Failed to update name');
+    } finally {
+      setEditNameLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -96,9 +116,18 @@ export default function EmployerProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto space-y-6"
       >
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Company Profile</h1>
-          <p className="text-gray-400">Manage your company information and contact details</p>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Company Profile</h1>
+            <p className="text-gray-400">Manage your company information and contact details</p>
+          </div>
+          <button
+            onClick={() => setEditNameOpen(true)}
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 hover:text-blue-300 transition-colors text-sm border border-blue-500/30 hover:border-blue-500/50 whitespace-nowrap"
+          >
+            <Edit2 className="w-4 h-4" />
+            <span>Edit Name</span>
+          </button>
         </div>
 
         <GlassCard className="p-8">
@@ -201,6 +230,15 @@ export default function EmployerProfilePage() {
           </div>
         </GlassCard>
       </motion.div>
+
+      {/* Edit Name Modal */}
+      <EditNameModal
+        isOpen={editNameOpen}
+        onClose={() => setEditNameOpen(false)}
+        currentName={companyName}
+        onSave={handleSaveName}
+        loading={editNameLoading}
+      />
     </Layout>
   );
 }
