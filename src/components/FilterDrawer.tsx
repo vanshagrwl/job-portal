@@ -57,7 +57,7 @@ export default function FilterDrawer({
       >
         {/* Search Field */}
         <motion.div custom={0} variants={itemVariants}>
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
+          <label className="block text-xs sm:text-sm font-semibold text-gray-800 mb-2">
             Job Title or Keyword
           </label>
           <input
@@ -65,13 +65,13 @@ export default function FilterDrawer({
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="e.g., Frontend Developer"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500"
           />
         </motion.div>
 
         {/* Location Filter */}
         <motion.div custom={1} variants={itemVariants}>
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
+          <label className="block text-xs sm:text-sm font-semibold text-gray-800 mb-2">
             Location
           </label>
           <input
@@ -79,20 +79,20 @@ export default function FilterDrawer({
             value={locationFilter}
             onChange={(e) => onLocationChange(e.target.value)}
             placeholder="e.g., New York, Remote"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </motion.div>
 
         {/* Category Filter */}
         {categories.length > 0 && (
           <motion.div custom={2} variants={itemVariants}>
-            <label className="block text-sm font-semibold text-gray-800 mb-2">
+            <label className="block text-xs sm:text-sm font-semibold text-gray-800 mb-2">
               Category
             </label>
             <select
               value={categoryFilter}
               onChange={(e) => onCategoryChange(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {categories.map((cat) => (
                 <option key={cat.value} value={cat.value}>
@@ -107,14 +107,14 @@ export default function FilterDrawer({
         <motion.div
           custom={3}
           variants={itemVariants}
-          className="flex gap-3 pt-4 border-t border-gray-200"
+          className="flex gap-2 sm:gap-3 pt-4 border-t border-gray-200"
         >
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
             <Button
               variant="secondary"
               theme={theme}
               onClick={onReset}
-              className="w-full text-sm"
+              className="w-full text-xs sm:text-sm"
             >
               Reset
             </Button>
@@ -124,7 +124,7 @@ export default function FilterDrawer({
               variant="primary"
               theme={theme}
               onClick={onClose}
-              className="w-full text-sm"
+              className="w-full text-xs sm:text-sm"
             >
               Apply
             </Button>

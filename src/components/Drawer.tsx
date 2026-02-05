@@ -74,7 +74,7 @@ export default function Drawer({
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]"
           />
 
-          {/* Drawer */}
+          {/* Drawer - Responsive: full width on mobile, fixed width on desktop */}
           <motion.div
             initial={{ x: position === 'right' ? 400 : -400, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -84,11 +84,11 @@ export default function Drawer({
               stiffness: 300,
               damping: 30,
             }}
-            className={`fixed top-16 ${position}-0 h-[calc(100%-4rem)] ${width} bg-white shadow-2xl z-[70] flex flex-col overflow-hidden`}
+            className={`fixed top-16 ${position}-0 h-[calc(100%-4rem)] bg-white shadow-2xl z-[70] flex flex-col overflow-hidden w-full md:w-96`}
           >
             {/* Header */}
-            <div className={`${headerBg} p-6 flex items-center justify-between text-white`}>
-              <h2 className="text-2xl font-bold">{title}</h2>
+            <div className={`${headerBg} p-4 sm:p-6 flex items-center justify-between text-white flex-shrink-0`}>
+              <h2 className="text-xl sm:text-2xl font-bold">{title}</h2>
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.95 }}
@@ -100,7 +100,7 @@ export default function Drawer({
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4" style={{ WebkitOverflowScrolling: 'touch' }}>
               {children}
             </div>
           </motion.div>
