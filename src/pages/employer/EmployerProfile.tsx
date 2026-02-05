@@ -92,8 +92,8 @@ export default function EmployerProfilePage() {
       const result = await profileAPI.updateEmployerProfile({ company_name: newName }, token);
       setCompanyName(newName);
       setProfile(prev => prev ? { ...prev, company_name: newName } : null);
-      // Update AuthContext profile
-      updateProfile({ company_name: newName, full_name: newName });
+      // Update AuthContext profile - ONLY company_name, not full_name
+      updateProfile({ company_name: newName });
       setEditNameOpen(false);
     } catch (error: any) {
       console.error('Error updating name:', error);
@@ -240,6 +240,8 @@ export default function EmployerProfilePage() {
         currentName={companyName}
         onSave={handleSaveName}
         loading={editNameLoading}
+        title="Edit Company Name"
+        label="Company Name"
       />
     </Layout>
   );

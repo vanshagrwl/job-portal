@@ -9,9 +9,11 @@ interface EditNameModalProps {
   currentName: string;
   onSave: (newName: string) => Promise<void>;
   loading?: boolean;
+  title?: string;
+  label?: string;
 }
 
-export default function EditNameModal({ isOpen, onClose, currentName, onSave, loading = false }: EditNameModalProps) {
+export default function EditNameModal({ isOpen, onClose, currentName, onSave, loading = false, title = 'Edit Name', label = 'Full Name' }: EditNameModalProps) {
   const [newName, setNewName] = useState(currentName);
   const [error, setError] = useState('');
 
@@ -65,7 +67,7 @@ export default function EditNameModal({ isOpen, onClose, currentName, onSave, lo
             <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm">
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 sm:p-6 flex items-center justify-between rounded-t-xl">
-              <h2 className="text-lg sm:text-xl font-bold text-white">Edit Name</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-white">{title}</h2>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
@@ -80,7 +82,7 @@ export default function EditNameModal({ isOpen, onClose, currentName, onSave, lo
             <div className="p-4 sm:p-6 space-y-4">
               <div>
                 <label className="block text-xs sm:text-sm font-semibold text-gray-800 mb-2">
-                  Full Name
+                  {label}
                 </label>
                 <input
                   type="text"
