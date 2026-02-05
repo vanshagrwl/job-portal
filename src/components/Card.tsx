@@ -1,5 +1,6 @@
 import { motion, HTMLMotionProps } from 'framer-motion';
 import { ReactNode } from 'react';
+import { useMotionConfig } from '../lib/motion';
 
 interface CardProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
   children: ReactNode;
@@ -27,11 +28,13 @@ export default function Card({
     ? 'rgba(30, 58, 138, 0.15)'
     : 'rgba(124, 58, 237, 0.15)';
 
+  const motionCfg = useMotionConfig();
+
   return (
     <motion.div
       className={`bg-white backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg relative overflow-hidden group ${className}`}
-      initial={props.initial ?? { opacity: 0, x: 40 }}
-      animate={props.animate ?? { opacity: 1, x: 0 }}
+      initial={props.initial ?? motionCfg.cardInitial}
+      animate={props.animate ?? motionCfg.cardAnimate}
       exit={props.exit}
       whileHover={hoverLift ? {
         scale: 1.02,
@@ -39,11 +42,7 @@ export default function Card({
         boxShadow: `0 30px 60px ${shadowColor}`,
       } : undefined}
       whileTap={stackEffect ? { scale: 0.98 } : undefined}
-      transition={props.transition ?? {
-        type: 'tween',
-        ease: 'easeOut',
-        duration: 0.5,
-      }}
+      transition={props.transition ?? motionCfg.cardTransition}
       {...props}
     >
       {/* Stack Effect - Multiple shadow layers */}

@@ -1,5 +1,6 @@
 import { motion, MotionProps } from 'framer-motion';
 import { ReactNode } from 'react';
+import { useMotionConfig } from '../lib/motion';
 
 interface AnimatedSectionProps extends Omit<MotionProps, 'children'> {
   children: ReactNode;
@@ -15,16 +16,20 @@ export default function AnimatedSection({
   direction = 'up',
   ...props
 }: AnimatedSectionProps) {
+  const motionCfg = useMotionConfig();
+
+  const distance = motionCfg.isSmall ? 24 : 40;
+
   const getInitialState = () => {
     switch (direction) {
       case 'up':
-        return { opacity: 0, y: 40 };
+        return { opacity: 0, y: distance };
       case 'down':
-        return { opacity: 0, y: -40 };
+        return { opacity: 0, y: -distance };
       case 'left':
-        return { opacity: 0, x: -40 };
+        return { opacity: 0, x: -distance };
       case 'right':
-        return { opacity: 0, x: 40 };
+        return { opacity: 0, x: distance };
       default:
         return { opacity: 0 };
     }
@@ -36,11 +41,11 @@ export default function AnimatedSection({
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       transition={{
         delay,
-        duration,
-        type: 'spring',
-        stiffness: 100,
+        duration: motionCfg.reduce ? 0.01 : duration,
+        type: motionCfg.reduce ? 'tween' : 'spring',
+        stiffness: motionCfg.reduce ? 100 : 120,
       }}
-      viewport={{ once: true, margin: '-100px' }}
+      viewport={{ once: true, margin: '-120px' }}
       {...props}
     >
       {children}

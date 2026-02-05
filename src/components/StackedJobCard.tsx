@@ -3,6 +3,7 @@ import { MapPin, Banknote, Briefcase, ArrowRight } from 'lucide-react';
 import { Job } from '../lib/api';
 import Button from './Button';
 import Card from './Card';
+import { useMotionConfig } from '../lib/motion';
 
 interface StackedJobCardProps {
   job: Job;
@@ -17,15 +18,18 @@ export default function StackedJobCard({
   theme = 'seeker',
   index = 0,
 }: StackedJobCardProps) {
+  const motionCfg = useMotionConfig();
+
+  const initialX = index % 2 === 0 ? (motionCfg.isSmall ? 30 : 60) : (motionCfg.isSmall ? -30 : -60);
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: index % 2 === 0 ? 60 : -60, scale: 0.98 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
+      // Use shared motion config but keep alternating side entrance for visual interest
+      initial={{ opacity: 0, x: initialX, scale: 0.98 }}
+      animate={motionCfg.cardAnimate}
       transition={{
-        delay: index * 0.06,
-        type: 'spring',
-        stiffness: 260,
-        damping: 24,
+        delay: index * motionCfg.listStagger,
+        ...motionCfg.cardTransition,
       }}
       whileHover={{ y: -6 }}
       className="h-full"
