@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Job, Application, jobsAPI, applicationsAPI, authAPI } from '../../lib/api';
+import { Job, Application, jobsAPI, applicationsAPI, authAPI, profileAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
@@ -98,20 +98,21 @@ export default function SeekerDashboard() {
     }
   };
 
-  const handleSaveName = async () => {
-    if (!currentUserName.trim() || !token) {
-      alert('Please enter a valid name');
-      return;
+  const handleSaveName = async (newName: string) => {
+    if (!newName.trim() || !token) {
+      throw new Error('Please enter a valid name');
     }
 
+    setEditNameLoading(true);
     try {
-      await profileAPI.updateProfile(token, { full_name: currentUserName });
-      setProfile(prev => prev ? { ...prev, full_name: currentUserName } : null);
-      alert('Name updated successfully!');
-      setIsEditingName(false);
+      await profileAPI.updateProfile(token, { full_name: newName });
+      setCurrentUserName(newName);
+      setEditNameOpen(false);
     } catch (error: any) {
       console.error('Error updating name:', error);
-      alert(error.message || 'Failed to update name');
+      throw new Error(error.message || 'Failed to update name');
+    } finally {
+      setEditNameLoading(false);
     }
   };
 
@@ -259,6 +260,26 @@ export default function SeekerDashboard() {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">Find Your Dream Job</h1>
           <p className="text-gray-400 text-sm sm:text-base">Discover opportunities that match your skills</p>
         </motion.div>
+
+        {/* User Greeting with Name Edit */}
+        {currentUserName && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center justify-center gap-2 flex-wrap"
+          >
+            <span className="text-lg sm:text-xl text-gray-300">
+              Welcome, <span className="font-semibold text-blue-400">{currentUserName}</span>
+            </span>
+            <button
+              onClick={() => setEditNameOpen(true)}
+              className="inline-flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 hover:text-blue-300 transition-colors text-xs sm:text-sm border border-blue-500/30 hover:border-blue-500/50"
+            >
+              <Edit2 className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span>Edit Name</span>
+            </button>
+          </motion.div>
+        )}
 
         <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-2 sm:gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
@@ -501,6 +522,15 @@ export default function SeekerDashboard() {
           onReset={() => { setCategoryFilter(''); setLocationFilter(''); setSearchTerm(''); }}
           categories={categories}
           theme={profile?.role === 'employer' ? 'employer' : 'seeker'}
+        />
+
+        {/* Edit Name Modal */}
+        <EditNameModal
+          isOpen={editNameOpen}
+          onClose={() => setEditNameOpen(false)}
+          currentName={currentUserName}
+          onSave={handleSaveName}
+          loading={editNameLoading}
         />
       </div>
     </Layout>
