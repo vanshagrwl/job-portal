@@ -140,17 +140,32 @@ export const authAPI = {
   },
 
   updateProfile: async (fullName: string, token: string) => {
-    const response = await fetch(`${API_URL}/auth/profile`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ full_name: fullName })
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Failed to update profile');
-    return data;
+    try {
+      const response = await fetch(`${API_URL}/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ full_name: fullName })
+      });
+      
+      const text = await response.text();
+      let data;
+      
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error('Failed to parse response:', text);
+        throw new Error('Server returned invalid response');
+      }
+      
+      if (!response.ok) throw new Error(data.error || 'Failed to update profile');
+      return data;
+    } catch (error: any) {
+      console.error('updateProfile error:', error);
+      throw error;
+    }
   }
 };
 

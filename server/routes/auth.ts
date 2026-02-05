@@ -120,4 +120,32 @@ router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
   }
 });
 
+// Update User's Full Name
+router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const { full_name } = req.body;
+
+    if (!full_name || full_name.trim() === '') {
+      return res.status(400).json({ error: 'Full name is required' });
+    }
+
+    console.log('Updating profile for user:', req.userId);
+    console.log('New full name:', full_name);
+
+    const profile = await Profile.findById(req.userId);
+    if (!profile) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    profile.full_name = full_name.trim();
+    const updatedProfile = await profile.save();
+
+    console.log('Profile updated successfully');
+    res.json(updatedProfile);
+  } catch (error: any) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: error.message || 'Failed to update profile' });
+  }
+});
+
 export default router;

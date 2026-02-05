@@ -123,13 +123,18 @@ export default function SeekerProfilePage() {
 
     setEditNameLoading(true);
     try {
+      console.log('Updating profile with name:', newName);
       const result = await profileAPI.updateSeekerProfile({ full_name: newName }, token);
+      console.log('Profile updated successfully:', result);
       setSeekerProfile(prev => prev ? { ...prev, full_name: newName } : null);
       // Update AuthContext profile
       updateProfile({ full_name: newName });
-      setEditNameOpen(false);
+      
       // Refetch to ensure backend is synced
       await fetchProfile();
+      
+      setEditNameOpen(false);
+      alert('Name updated successfully!');
     } catch (error: any) {
       console.error('Error updating name:', error);
       throw new Error(error.message || 'Failed to update name');

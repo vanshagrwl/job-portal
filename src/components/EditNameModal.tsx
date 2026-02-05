@@ -33,7 +33,9 @@ export default function EditNameModal({ isOpen, onClose, currentName, onSave, lo
       await onSave(newName.trim());
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Failed to update name');
+      console.error('Modal save error:', err);
+      const errorMsg = err.message || 'Failed to update name';
+      setError(errorMsg);
     }
   };
 

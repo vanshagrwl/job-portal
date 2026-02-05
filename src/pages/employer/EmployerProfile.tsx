@@ -85,21 +85,28 @@ export default function EmployerProfilePage() {
   };
 
   const handleSaveName = async (newName: string) => {
-    if (!user || !token) return;
+    if (!user || !token) {
+      throw new Error('User or token not available');
+    }
 
     setEditNameLoading(true);
     try {
       // Update the user's personal full_name using authAPI
+      console.log('Updating profile with name:', newName);
       const result = await authAPI.updateProfile(newName, token);
+      console.log('Profile updated successfully:', result);
       
       // Update local state and AuthContext
       updateProfile({ full_name: newName });
-      setEditNameOpen(false);
+      
       // Refetch to ensure backend is synced
       await fetchProfile();
+      
+      setEditNameOpen(false);
+      alert('Name updated successfully!');
     } catch (error: any) {
-      console.error('Error updating name:', error);
-      throw new Error(error.message || 'Failed to update name');
+      console.error('Error updating name:', error.message);
+      throw new Error(error.message || 'Failed to update name. Please try again.');
     } finally {
       setEditNameLoading(false);
     }
