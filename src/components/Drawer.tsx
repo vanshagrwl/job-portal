@@ -48,7 +48,7 @@ export default function Drawer({
             animate="visible"
             exit="exit"
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
           />
 
           {/* Drawer */}
@@ -61,7 +61,7 @@ export default function Drawer({
               stiffness: 300,
               damping: 30,
             }}
-            className={`fixed top-0 ${position}-0 h-full bg-white shadow-2xl z-[70] flex flex-col overflow-hidden w-64 sm:w-72 md:w-80 lg:w-96`}
+            className={`fixed top-0 ${position}-0 h-full bg-white shadow-2xl z-[100] flex flex-col overflow-hidden w-64 sm:w-72 md:w-80 lg:w-96`}
           >
             {/* Header */}
             <div className={`${headerBg} p-4 sm:p-5 md:p-6 flex items-center justify-between text-white flex-shrink-0`}>
