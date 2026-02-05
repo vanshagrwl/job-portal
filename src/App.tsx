@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { MotionPrefProvider } from './contexts/MotionPreferenceContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
@@ -37,9 +38,10 @@ function DashboardRouter() {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <Routes>
+    <MotionPrefProvider>
+      <Router>
+        <AuthProvider>
+          <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -126,9 +128,10 @@ function App() {
           />
 
           <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </AuthProvider>
-    </Router>
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </MotionPrefProvider>
   );
 }
 

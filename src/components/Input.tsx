@@ -1,5 +1,6 @@
 import { InputHTMLAttributes, forwardRef } from 'react';
 import { motion } from 'framer-motion';
+import { useMotionConfig } from '../lib/motion';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -8,23 +9,25 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, className = '', ...props }, ref) => {
+    const motionCfg = useMotionConfig();
+
     return (
       <div className="w-full">
         {label && (
           <motion.label
             className="block text-sm font-medium text-gray-300 mb-2 transition-colors duration-200"
-            initial={{ opacity: 0, y: -10 }}
+            initial={motionCfg.reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            transition={motionCfg.reduce ? { duration: 0 } : { delay: 0.1 }}
           >
             {label}
           </motion.label>
         )}
         <motion.div
           className="relative"
-          initial={{ opacity: 0 }}
+          initial={motionCfg.reduce ? { opacity: 1 } : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
+          transition={motionCfg.reduce ? { duration: 0 } : { delay: 0.15 }}
         >
           <input
             ref={ref}
@@ -37,7 +40,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             className="absolute inset-0 rounded-lg pointer-events-none"
             initial={{ opacity: 0 }}
             whileFocus={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
+            transition={motionCfg.reduce ? { duration: 0 } : { duration: 0.2 }}
             style={{
               boxShadow: 'inset 0 0 10px rgba(59, 130, 246, 0.1), 0 0 15px rgba(59, 130, 246, 0.1)',
             }}
@@ -47,9 +50,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {error && (
           <motion.p
             className="mt-2 text-sm text-rose-400 font-medium"
-            initial={{ opacity: 0, y: -5 }}
+            initial={motionCfg.reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 300 }}
+            transition={motionCfg.reduce ? { duration: 0 } : { type: 'spring', stiffness: 300 }}
           >
             {error}
           </motion.p>
