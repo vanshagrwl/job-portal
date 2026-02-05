@@ -91,9 +91,9 @@ export default function EmployerProfilePage() {
 
     setEditNameLoading(true);
     try {
-      // Update the user's personal full_name using authAPI
+      // Update the user's personal full_name using the profile endpoint
       console.log('Updating profile with name:', newName);
-      const result = await authAPI.updateProfile(newName, token);
+      const result = await profileAPI.updateEmployerProfile({ full_name: newName }, token);
       console.log('Profile updated successfully:', result);
       
       // Update local state and AuthContext

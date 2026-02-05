@@ -30,10 +30,10 @@ router.get('/seeker', authMiddleware, async (req: AuthRequest, res: Response) =>
 // Update seeker profile with optional file upload
 router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthRequest, res: Response) => {
   try {
-    const { skills, bio, location, phone } = req.body;
+    const { skills, bio, location, phone, full_name } = req.body;
 
-    console.log('Update profile request - userId:', req.userId);
-    console.log('Request body:', { skills, bio, location, phone });
+    console.log('Update seeker profile request - userId:', req.userId);
+    console.log('Request body:', { skills, bio, location, phone, full_name });
     console.log('File uploaded:', req.file ? { filename: req.file.filename, size: req.file.size } : 'No file');
 
     let profile = await SeekerProfile.findOne({ user_id: req.userId });
@@ -70,11 +70,22 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
       console.log('Resume URL set to:', profile.resume_url);
     }
     
+    // If full_name is provided, also update the Profile table
+    if (full_name !== undefined) {
+      console.log('Updating full_name in Profile table to:', full_name);
+      const userProfile = await Profile.findById(req.userId);
+      if (userProfile) {
+        userProfile.full_name = full_name;
+        await userProfile.save();
+        console.log('Profile full_name updated successfully');
+      }
+    }
+    
     profile.updated_at = new Date();
     console.log('Profile before save:', profile);
     const savedProfile = await profile.save();
     
-    console.log('Profile saved successfully');
+    console.log('Seeker profile saved successfully');
     const response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
     res.json(response);
   } catch (error: any) {
@@ -101,7 +112,10 @@ router.get('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
 // Update employer profile
 router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const { company_name, company_logo_url, about_company, industry, company_size, website, location, phone } = req.body;
+    const { company_name, company_logo_url, about_company, industry, company_size, website, location, phone, full_name } = req.body;
+
+    console.log('Update employer profile - userId:', req.userId);
+    console.log('Request body:', { company_name, full_name });
 
     let profile = await EmployerProfile.findOne({ user_id: req.userId });
     
@@ -119,6 +133,17 @@ router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
     if (website !== undefined) profile.website = website;
     if (location !== undefined) profile.location = location;
     if (phone !== undefined) profile.phone = phone;
+    
+    // If full_name is provided, also update the Profile table (personal name, not company name)
+    if (full_name !== undefined) {
+      console.log('Updating full_name in Profile table to:', full_name);
+      const userProfile = await Profile.findById(req.userId);
+      if (userProfile) {
+        userProfile.full_name = full_name;
+        await userProfile.save();
+        console.log('Profile full_name updated successfully');
+      }
+    }
     
     profile.updated_at = new Date();
     const savedProfile = await profile.save();
