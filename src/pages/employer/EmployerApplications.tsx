@@ -177,24 +177,23 @@ export default function EmployerApplications() {
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               >
                 <GlassCard className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-3 mb-2">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium capitalize flex items-center space-x-1 ${statusColors[application.status]}`}>
                           {statusIcons[application.status]}
                           <span>{application.status}</span>
                         </span>
                       </div>
-                      <p className="text-white font-medium">Application ID: {application._id}</p>
+                      <p className="text-white font-medium break-all">Application ID: {application._id}</p>
                       <p className="text-gray-400 text-sm mt-1">
                         Applied on {new Date(application.applied_at).toLocaleDateString()}
                       </p>
-
                     </div>
-                    <Link to={`/applications/${application._id}`}>
-                      <Button variant="primary" className="ml-4">
-                        <Eye className="w-4 h-4 mr-2" />
-                        Review
+                    <Link to={`/applications/${application._id}`} className="w-full sm:w-auto">
+                      <Button variant="primary" className="w-full sm:w-auto flex items-center justify-center space-x-2">
+                        <Eye className="w-4 h-4" />
+                        <span>Review</span>
                       </Button>
                     </Link>
                   </div>

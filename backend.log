@@ -1,0 +1,11 @@
+nohup: ignoring input
+[dotenv@17.2.3] injecting env (4) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+Connecting to MongoDB: mongodb+srv://agvansh:vansh123@jobportal.efztav4.m...
+✅ Server listening on port 5000
+API available at http://localhost:5000/api
+Connected to MongoDB
+Sign up attempt for: test@example.com role: seeker
+User created: 6087129f-9018-4cef-94ef-a99ce510d0ab
+Sign in attempt for: test@example.com
+User found: true
+Password match: true

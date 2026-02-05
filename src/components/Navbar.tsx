@@ -158,7 +158,7 @@ export default function Navbar() {
           >
             {profile?.role === 'seeker' && (
               <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                <Button variant="ghost" className="w-full flex items-center justify-start space-x-3 text-sm py-2 px-4">
+                <Button variant="ghost" className="w-full flex items-center justify-center space-x-3 text-sm py-3 px-4 hover:bg-white/5">
                   <User className="w-5 h-5 flex-shrink-0" />
                   <span>Profile</span>
                 </Button>
@@ -167,7 +167,7 @@ export default function Navbar() {
 
             {profile?.role === 'employer' && (
               <Link to="/employer-profile" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                <Button variant="ghost" className="w-full flex items-center justify-start space-x-3 text-sm py-2 px-4">
+                <Button variant="ghost" className="w-full flex items-center justify-center space-x-3 text-sm py-3 px-4 hover:bg-white/5">
                   <User className="w-5 h-5 flex-shrink-0" />
                   <span>Profile</span>
                 </Button>
@@ -175,14 +175,14 @@ export default function Navbar() {
             )}
 
             <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="w-full">
-              <Button variant="ghost" className="w-full flex items-center justify-start text-sm py-2 px-4">
+              <Button variant="ghost" className="w-full flex items-center justify-center text-sm py-3 px-4 hover:bg-white/5">
                 <span className="truncate">{profile?.full_name}</span>
               </Button>
             </Link>
 
             {profile?.role === 'employer' && (
               <Link to="/employer-applications" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                <Button variant="ghost" className="w-full flex items-center justify-start space-x-3 text-sm py-2 px-4">
+                <Button variant="ghost" className="w-full flex items-center justify-center space-x-3 text-sm py-3 px-4 hover:bg-white/5">
                   <Bell className="w-5 h-5 flex-shrink-0" />
                   <span>Applications</span>
                 </Button>
@@ -195,10 +195,10 @@ export default function Navbar() {
                 handleSignOut();
                 setMobileMenuOpen(false);
               }}
-              className="w-full flex items-center justify-start space-x-3 text-sm py-2 px-4 text-center"
+              className="w-full flex items-center justify-center space-x-3 text-sm py-3 px-4"
             >
               <LogOut className="w-5 h-5 flex-shrink-0" />
-              <span className="flex-1 text-left">Sign Out</span>
+              <span>Sign Out</span>
             </Button>
           </motion.div>
         )}
