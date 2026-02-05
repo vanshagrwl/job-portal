@@ -61,7 +61,7 @@ export default function Drawer({
               stiffness: 300,
               damping: 30,
             }}
-            className={`fixed top-0 ${position}-0 h-full bg-white shadow-2xl z-[100] flex flex-col overflow-hidden w-64 sm:w-72 md:w-80 lg:w-96`}
+            className={`fixed top-16 ${position}-0 h-[calc(100%-4rem)] bg-white shadow-2xl z-[100] flex flex-col overflow-hidden w-64 sm:w-72 md:w-80 lg:w-96`}
           >
             {/* Header */}
             <div className={`${headerBg} p-4 sm:p-5 md:p-6 flex items-center justify-between text-white flex-shrink-0`}>
@@ -77,7 +77,7 @@ export default function Drawer({
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 md:p-6 pt-6 sm:pt-8 space-y-3 sm:space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 md:p-6 space-y-3 sm:space-y-4">
               {children}
             </div>
           </motion.div>
@@ -86,7 +86,3 @@ export default function Drawer({
     </AnimatePresence>
   );
 }
-
-// Lock background scrolling when the drawer is open
-// We add a small helper to toggle body scroll when `isOpen` changes.
-// Move this logic inside the component so it runs with the proper `isOpen`.
