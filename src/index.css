@@ -10,6 +10,7 @@ body {
   width: 100%;
   height: 100%;
   background-color: #020617;
+  scroll-behavior: smooth;
 }
 
 #root {
@@ -21,12 +22,21 @@ body {
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 100px;
 }
 
 /* Enhanced focus states */
 @layer components {
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-gray-900/50 transition-all duration-300;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  button,
+  input,
+  textarea,
+  select {
+    @apply transition-all duration-300;
   }
 
   /* Animated text gradient */

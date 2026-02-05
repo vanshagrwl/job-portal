@@ -7,7 +7,7 @@ import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import PhoneInput from '../../components/PhoneInput';
-import { Upload, FileText, X } from 'lucide-react';
+import { Upload, FileText, X, CheckCircle } from 'lucide-react';
 
 export default function SeekerProfilePage() {
   const { user, token } = useAuth();
@@ -81,16 +81,10 @@ export default function SeekerProfilePage() {
       formData.append('location', location);
       formData.append('phone', phone);
 
-      // Add resume file if selected
       if (resumeFile) {
         formData.append('resume', resumeFile);
       }
 
-      console.log('Saving seeker profile with:', { skills, bio, location, phone, hasResume: !!resumeFile });
-      console.log('Token:', token.substring(0, 20) + '...');
-      console.log('API URL:', API_URL);
-
-      // Use FormData with file upload
       const response = await fetch(`${API_URL}/profile/seeker`, {
         method: 'PUT',
         headers: {
@@ -99,12 +93,9 @@ export default function SeekerProfilePage() {
         body: formData
       });
 
-      console.log('Seeker profile save response status:', response.status);
       const updatedProfile = await response.json();
-      console.log('Seeker profile save response:', updatedProfile);
       
       if (!response.ok) {
-        console.error('Server error response:', updatedProfile);
         throw new Error(updatedProfile?.error || `HTTP ${response.status}: Failed to save profile`);
       }
 
@@ -116,8 +107,6 @@ export default function SeekerProfilePage() {
       fetchProfile();
     } catch (error: any) {
       console.error('Error saving profile:', error);
-      console.error('Error type:', error.name);
-      console.error('Error message:', error.message);
       alert(error.message || 'Failed to save profile');
     } finally {
       setSaving(false);
@@ -127,132 +116,219 @@ export default function SeekerProfilePage() {
   if (loading) {
     return (
       <Layout>
-        <div className="text-center text-gray-400">Loading...</div>
+        <div className="flex items-center justify-center min-h-screen">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-blue-400"
+          >
+            ⚙
+          </motion.div>
+        </div>
       </Layout>
     );
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: 'spring', stiffness: 100, damping: 20 },
+    },
+  };
+
   return (
     <Layout>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto space-y-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="w-full"
       >
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">My Profile</h1>
-          <p className="text-gray-400">Keep your profile updated to attract employers</p>
-        </div>
+        {/* Header Section */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">My Profile</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Keep your profile updated to attract employers</p>
+        </motion.div>
 
-        <GlassCard className="p-8">
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Bio
-              </label>
-              <textarea
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                rows={4}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
-                placeholder="Tell employers about yourself..."
-              />
-            </div>
-
-            <Input
-              label="Location"
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="City, State"
-            />
-
-            <PhoneInput
-              value={phone}
-              onChange={(value) => setPhone(value)}
-              label="Contact Phone"
-              placeholder="Enter phone number with country code"
-            />
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Skills
-              </label>
-              <div className="flex space-x-2 mb-3">
-                <input
-                  type="text"
-                  value={skillInput}
-                  onChange={(e) => setSkillInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
-                  placeholder="Add a skill"
-                  className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+        {/* Main Card */}
+        <motion.div variants={itemVariants}>
+          <GlassCard className="p-4 sm:p-6 lg:p-8">
+            <div className="space-y-6 sm:space-y-8">
+              
+              {/* Bio Section */}
+              <motion.div variants={itemVariants}>
+                <label className="block text-sm font-semibold text-gray-200 mb-3">About You</label>
+                <textarea
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent resize-none transition-all duration-300"
+                  placeholder="Tell employers about yourself and your career goals..."
                 />
-                <Button variant="secondary" onClick={handleAddSkill}>
-                  Add
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {skills.map((skill) => (
-                  <motion.span
-                    key={skill}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="inline-flex items-center px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-sm"
+              </motion.div>
+
+              {/* Location & Phone Section */}
+              <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div>
+                  <Input
+                    label="Location"
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="City, State"
+                  />
+                </div>
+                <div>
+                  <PhoneInput
+                    value={phone}
+                    onChange={(value) => setPhone(value)}
+                    label="Contact Phone"
+                    placeholder="Enter phone number"
+                  />
+                </div>
+              </motion.div>
+
+              {/* Skills Section */}
+              <motion.div variants={itemVariants}>
+                <label className="block text-sm font-semibold text-gray-200 mb-3">Professional Skills</label>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4">
+                  <input
+                    type="text"
+                    value={skillInput}
+                    onChange={(e) => setSkillInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
+                    placeholder="Add a skill and press Enter"
+                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
+                  />
+                  <Button 
+                    variant="secondary" 
+                    onClick={handleAddSkill}
+                    className="w-full sm:w-auto"
                   >
-                    {skill}
-                    <button
-                      onClick={() => handleRemoveSkill(skill)}
-                      className="ml-2 hover:text-blue-300"
+                    Add
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {skills.map((skill, index) => (
+                    <motion.span
+                      key={skill}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: index * 0.05 }}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 text-blue-300 border border-blue-500/30 rounded-full text-sm font-medium hover:border-blue-500/50 transition-all duration-300"
                     >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Resume
-              </label>
-              {resumeUrl && !resumeFile && (
-                <div className="mb-3 p-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-between">
-                  <div className="flex items-center space-x-2 text-green-400">
-                    <FileText className="w-5 h-5" />
-                    <span className="text-sm">Resume uploaded</span>
-                  </div>
-                  <span className="text-sm text-blue-400">
-                    {resumeUrl.split('/').pop()}
-                  </span>
+                      {skill}
+                      <button
+                        onClick={() => handleRemoveSkill(skill)}
+                        className="ml-2 hover:text-blue-200 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </motion.span>
+                  ))}
                 </div>
-              )}
-              <label className="block">
-                <div className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500/50 transition-colors">
-                  <Upload className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                  <p className="text-white mb-1">
-                    {resumeFile ? resumeFile.name : 'Click to upload resume'}
-                  </p>
-                  <p className="text-sm text-gray-400">PDF or DOCX (Max 5MB)</p>
-                </div>
-                <input
-                  type="file"
-                  accept=".pdf,.docx"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-              </label>
-            </div>
+              </motion.div>
 
-            <Button
-              variant="primary"
-              onClick={handleSave}
-              disabled={saving}
-              className="w-full"
-            >
-              {saving ? 'Saving...' : 'Save Profile'}
-            </Button>
-          </div>
-        </GlassCard>
+              {/* Resume Section */}
+              <motion.div variants={itemVariants}>
+                <label className="block text-sm font-semibold text-gray-200 mb-4">Professional Resume</label>
+                
+                {/* Resume Status Badge */}
+                {resumeUrl && !resumeFile && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-4 p-4 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 rounded-lg backdrop-blur-sm"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <motion.div
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="p-2 bg-emerald-500/20 rounded-lg"
+                        >
+                          <CheckCircle className="w-5 h-5 text-emerald-400" />
+                        </motion.div>
+                        <div>
+                          <p className="text-sm font-semibold text-emerald-300">Resume Active</p>
+                          <p className="text-xs text-emerald-200/70">Your profile is complete</p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-emerald-300 bg-emerald-500/20 px-3 py-1 rounded-full">✓</span>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Upload Area */}
+                <label className="block cursor-pointer">
+                  <motion.div
+                    whileHover={{ borderColor: 'rgba(59, 130, 246, 0.5)', backgroundColor: 'rgba(59, 130, 246, 0.03)' }}
+                    whileTap={{ scale: 0.98 }}
+                    className="border-2 border-dashed border-white/20 rounded-xl p-6 sm:p-8 lg:p-10 text-center transition-all duration-300 hover:bg-blue-500/5"
+                  >
+                    <motion.div
+                      animate={{ y: [0, -8, 0] }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                      className="mb-3"
+                    >
+                      <Upload className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-blue-400/60" />
+                    </motion.div>
+                    <p className="text-white font-semibold text-sm sm:text-base mb-1">
+                      {resumeFile ? resumeFile.name : 'Upload Your Resume'}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-400">
+                      PDF or DOCX • Max 5MB • Click or drag to upload
+                    </p>
+                  </motion.div>
+                  <input
+                    type="file"
+                    accept=".pdf,.docx"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </label>
+              </motion.div>
+
+              {/* Save Button */}
+              <motion.div variants={itemVariants}>
+                <Button
+                  variant="primary"
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="w-full py-3 sm:py-4 text-base sm:text-lg font-semibold"
+                >
+                  {saving ? (
+                    <span className="flex items-center justify-center space-x-2">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        ⚙
+                      </motion.div>
+                      <span>Saving...</span>
+                    </span>
+                  ) : (
+                    'Save Profile'
+                  )}
+                </Button>
+              </motion.div>
+            </div>
+          </GlassCard>
+        </motion.div>
       </motion.div>
     </Layout>
   );
