@@ -122,11 +122,11 @@ export default function Navbar() {
                     <Link to="/employer-applications">
                       <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                         <Button variant="ghost" className="relative">
-                          <Bell className="w-4 h-4" />
+                          <Bell className="w-5 h-5" />
                           <motion.span
-                            className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full"
-                            animate={{ scale: [1, 1.2, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
+                            className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50"
+                            animate={{ scale: [1, 1.3, 1] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
                           />
                         </Button>
                       </motion.div>
