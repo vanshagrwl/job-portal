@@ -14,7 +14,7 @@ export default function Button({
   theme = 'seeker',
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center h-12 px-6 rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group';
+  const baseStyles = 'inline-flex items-center justify-center gap-2 h-12 px-6 rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group';
 
   const variants = {
     employer: {
@@ -85,7 +85,9 @@ export default function Button({
       )}
 
       {/* Content */}
-      <span className="relative z-10">{children}</span>
+      <span className="relative z-10 flex items-center gap-2">
+        {children}
+      </span>
     </motion.button>
   );
 }

@@ -11,12 +11,15 @@ export default function GlassCard({ children, className = '', glow = false, ...p
   return (
     <motion.div
       className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl relative overflow-hidden group ${glow ? 'glow-sm' : ''} ${className}`}
+      initial={props.initial ?? { opacity: 0, x: 40 }}
+      animate={props.animate ?? { opacity: 1, x: 0 }}
+      exit={props.exit}
       whileHover={{ 
         scale: 1.02, 
         y: -8,
         boxShadow: '0 20px 40px rgba(59, 130, 246, 0.2)'
       }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      transition={props.transition ?? { type: 'tween', ease: 'easeOut', duration: 0.5 }}
       {...props}
     >
       {/* Animated border glow on hover */}

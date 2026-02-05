@@ -19,13 +19,13 @@ export default function StackedJobCard({
 }: StackedJobCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, x: index % 2 === 0 ? 60 : -60, scale: 0.98 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
       transition={{
-        delay: index * 0.05,
+        delay: index * 0.06,
         type: 'spring',
-        stiffness: 100,
-        damping: 15,
+        stiffness: 260,
+        damping: 24,
       }}
       whileHover={{ y: -6 }}
       className="h-full"

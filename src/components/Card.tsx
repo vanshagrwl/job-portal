@@ -30,16 +30,19 @@ export default function Card({
   return (
     <motion.div
       className={`bg-white backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg relative overflow-hidden group ${className}`}
+      initial={props.initial ?? { opacity: 0, x: 40 }}
+      animate={props.animate ?? { opacity: 1, x: 0 }}
+      exit={props.exit}
       whileHover={hoverLift ? {
         scale: 1.02,
         y: -12,
         boxShadow: `0 30px 60px ${shadowColor}`,
       } : undefined}
       whileTap={stackEffect ? { scale: 0.98 } : undefined}
-      transition={{
-        type: 'spring',
-        stiffness: 300,
-        damping: 20,
+      transition={props.transition ?? {
+        type: 'tween',
+        ease: 'easeOut',
+        duration: 0.5,
       }}
       {...props}
     >
