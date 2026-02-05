@@ -1,14 +1,15 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Job, Application, jobsAPI, applicationsAPI } from '../../lib/api';
+import { Job, Application, jobsAPI, applicationsAPI, authAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
 import { StackedJobCard } from '../../components';
 import FilterDrawer from '../../components/FilterDrawer';
-import { Search, Briefcase, MapPin, Clock, FileText, X } from 'lucide-react';
+import EditNameModal from '../../components/EditNameModal';
+import { Search, Briefcase, MapPin, Clock, FileText, X, Edit2 } from 'lucide-react';
 
 interface SearchSuggestion {
   type: 'title' | 'location' | 'skill';
@@ -31,6 +32,9 @@ export default function SeekerDashboard() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [debouncedLocationFilter, setDebouncedLocationFilter] = useState('');
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+  const [editNameOpen, setEditNameOpen] = useState(false);
+  const [editNameLoading, setEditNameLoading] = useState(false);
+  const [currentUserName, setCurrentUserName] = useState(profile?.full_name || '');
 
   const categories = [
     { value: '', label: 'All Categories' },
@@ -47,6 +51,13 @@ export default function SeekerDashboard() {
       fetchApplications();
     }
   }, [user, token]);
+
+  // Update currentUserName when profile changes
+  useEffect(() => {
+    if (profile?.full_name) {
+      setCurrentUserName(profile.full_name);
+    }
+  }, [profile?.full_name]);
 
   // Debounce search term
   useEffect(() => {
@@ -84,6 +95,23 @@ export default function SeekerDashboard() {
       setApplications(data || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
+    }
+  };
+
+  const handleSaveName = async () => {
+    if (!currentUserName.trim() || !token) {
+      alert('Please enter a valid name');
+      return;
+    }
+
+    try {
+      await profileAPI.updateProfile(token, { full_name: currentUserName });
+      setProfile(prev => prev ? { ...prev, full_name: currentUserName } : null);
+      alert('Name updated successfully!');
+      setIsEditingName(false);
+    } catch (error: any) {
+      console.error('Error updating name:', error);
+      alert(error.message || 'Failed to update name');
     }
   };
 
