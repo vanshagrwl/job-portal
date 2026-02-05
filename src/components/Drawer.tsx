@@ -61,11 +61,11 @@ export default function Drawer({
               stiffness: 300,
               damping: 30,
             }}
-            className={`fixed top-0 ${position}-0 h-full ${width} bg-white shadow-2xl z-[70] flex flex-col overflow-hidden`}
+            className={`fixed top-0 ${position}-0 h-full bg-white shadow-2xl z-[70] flex flex-col overflow-hidden w-full sm:w-80 md:w-96 lg:w-[420px]`}
           >
             {/* Header */}
-            <div className={`${headerBg} p-6 flex items-center justify-between text-white`}>
-              <h2 className="text-2xl font-bold">{title}</h2>
+            <div className={`${headerBg} p-4 sm:p-5 md:p-6 flex items-center justify-between text-white flex-shrink-0`}>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold">{title}</h2>
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.95 }}
@@ -77,7 +77,7 @@ export default function Drawer({
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 md:p-6 space-y-3 sm:space-y-4">
               {children}
             </div>
           </motion.div>
