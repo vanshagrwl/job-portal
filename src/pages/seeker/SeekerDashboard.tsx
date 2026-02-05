@@ -31,7 +31,6 @@ export default function SeekerDashboard() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [debouncedLocationFilter, setDebouncedLocationFilter] = useState('');
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const categories = [
     { value: '', label: 'All Categories' },
@@ -249,18 +248,7 @@ export default function SeekerDashboard() {
             </Link>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-            <Button 
-              variant="secondary" 
-              onClick={() => {
-                // Open drawer on desktop, toggle inline filters on mobile
-                if (window.innerWidth >= 640) {
-                  setFilterDrawerOpen(true);
-                } else {
-                  setShowMobileFilters(!showMobileFilters);
-                }
-              }} 
-              className="flex-1 sm:flex-none text-xs sm:text-sm"
-            >
+            <Button variant="secondary" onClick={() => setFilterDrawerOpen(true)} className="flex-1 sm:flex-none text-xs sm:text-sm">
               Filters
             </Button>
             <Button variant="primary" onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="flex-1 sm:flex-none text-xs sm:text-sm">
@@ -437,67 +425,6 @@ export default function SeekerDashboard() {
             </div>
           </div>
         </GlassCard>
-
-        {/* Mobile Inline Filter Panel */}
-        {showMobileFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden"
-          >
-            <GlassCard className="p-4 space-y-4">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold text-white">Filter Options</h3>
-                <button
-                  onClick={() => setShowMobileFilters(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-300 mb-2">
-                  Category
-                </label>
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-white/10 rounded-lg bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat.value} value={cat.value} className="bg-gray-900 text-white">
-                      {cat.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex gap-2">
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setCategoryFilter('');
-                    setLocationFilter('');
-                    setSearchTerm('');
-                    setShowMobileFilters(false);
-                  }}
-                  className="flex-1 text-xs sm:text-sm py-2"
-                >
-                  Reset
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => setShowMobileFilters(false)}
-                  className="flex-1 text-xs sm:text-sm py-2"
-                >
-                  Apply
-                </Button>
-              </div>
-            </GlassCard>
-          </motion.div>
-        )}
 
         {loading ? (
           <div className="text-center text-gray-400">Loading jobs...</div>

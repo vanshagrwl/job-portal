@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -37,29 +37,6 @@ export default function Drawer({
     ? 'bg-gradient-employer'
     : 'bg-gradient-seeker';
 
-  useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    const originalPaddingRight = document.body.style.paddingRight;
-
-    if (isOpen) {
-      // Prevent background from scrolling while drawer is open.
-      // Also compensate for scrollbar width to avoid layout shift.
-      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-      if (scrollBarWidth > 0) {
-        document.body.style.paddingRight = `${scrollBarWidth}px`;
-      }
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = originalOverflow || '';
-      document.body.style.paddingRight = originalPaddingRight || '';
-    }
-
-    return () => {
-      document.body.style.overflow = originalOverflow || '';
-      document.body.style.paddingRight = originalPaddingRight || '';
-    };
-  }, [isOpen]);
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -71,10 +48,10 @@ export default function Drawer({
             animate="visible"
             exit="exit"
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
           />
 
-          {/* Drawer - Responsive: full width on mobile, fixed width on desktop */}
+          {/* Drawer */}
           <motion.div
             initial={{ x: position === 'right' ? 400 : -400, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -84,11 +61,11 @@ export default function Drawer({
               stiffness: 300,
               damping: 30,
             }}
-            className={`fixed top-16 ${position}-0 h-[calc(100%-4rem)] bg-white shadow-2xl z-[70] flex flex-col overflow-hidden w-full md:w-96`}
+            className={`fixed top-0 ${position}-0 h-full ${width} bg-white shadow-2xl z-60 flex flex-col overflow-hidden`}
           >
             {/* Header */}
-            <div className={`${headerBg} p-4 sm:p-6 flex items-center justify-between text-white flex-shrink-0`}>
-              <h2 className="text-xl sm:text-2xl font-bold">{title}</h2>
+            <div className={`${headerBg} p-6 flex items-center justify-between text-white`}>
+              <h2 className="text-2xl font-bold">{title}</h2>
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.95 }}
@@ -100,7 +77,7 @@ export default function Drawer({
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {children}
             </div>
           </motion.div>
