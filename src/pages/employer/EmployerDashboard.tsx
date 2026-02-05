@@ -107,18 +107,18 @@ export default function EmployerDashboard() {
 
   return (
     <Layout>
-      <div className="space-y-8 max-w-6xl mx-auto px-4">
+      <div className="space-y-8 w-full">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4"
         >
-          <div>
+          <div className="flex-1">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">Employer Dashboard</h1>
             <p className="text-gray-400 text-sm sm:text-base">Manage your job postings and applications</p>
           </div>
-          <Link to="/post-job">
-            <Button variant="primary" className="flex items-center space-x-2">
+          <Link to="/post-job" className="w-full sm:w-auto">
+            <Button variant="primary" className="w-full sm:w-auto flex items-center justify-center space-x-2">
               <Plus className="w-5 h-5" />
               <span>Post New Job</span>
             </Button>

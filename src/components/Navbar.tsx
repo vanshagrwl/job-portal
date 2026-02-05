@@ -42,7 +42,19 @@ export default function Navbar() {
   };
 
   return (
-    <motion.nav
+    <>
+      {/* Blur overlay when mobile menu is open */}
+      {mobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
+        />
+      )}
+      
+      <motion.nav
       variants={navVariants}
       initial="hidden"
       animate="visible"
@@ -204,5 +216,6 @@ export default function Navbar() {
         )}
       </div>
     </motion.nav>
+    </>
   );
 }
