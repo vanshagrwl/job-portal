@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Button from './Button';
 import { Briefcase, User, LogOut, Bell, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { useMotionPref } from '../contexts/MotionPreferenceContext';
 
 export default function Navbar() {
   const { user, profile, signOut } = useAuth();
@@ -144,6 +145,21 @@ export default function Navbar() {
                     <span>Sign Out</span>
                   </Button>
                 </motion.div>
+                {/* Motion preference toggle for desktop */}
+                <motion.div custom={4} variants={itemVariants} initial="hidden" animate="visible">
+                  <div className="flex items-center space-x-2">
+                    <label className="text-sm text-gray-300">Reduce Motion</label>
+                    <button
+                      onClick={() => {
+                        try { const current = localStorage.getItem('motion:reduced'); const next = !(current && JSON.parse(current)); localStorage.setItem('motion:reduced', JSON.stringify(next)); window.location.reload(); } catch { }
+                      }}
+                      className="w-10 h-6 rounded-full bg-white/10 flex items-center p-1"
+                      aria-label="Toggle reduced motion"
+                    >
+                      <motion.span className="w-4 h-4 bg-white rounded-full shadow" layout transition={{ type: 'spring', stiffness: 300 }} />
+                    </button>
+                  </div>
+                </motion.div>
               </>
             )}
           </div>
@@ -213,19 +229,35 @@ export default function Navbar() {
               </Link>
             )}
 
-            <Button
-              variant="secondary"
-              onClick={() => {
-                handleSignOut();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full py-3 px-4"
-            >
-              <div className="flex flex-col items-center gap-1">
-                <LogOut className="w-6 h-6" />
-                <span className="text-sm">Sign Out</span>
+            <div className="px-4">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  handleSignOut();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full py-3 px-4"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <LogOut className="w-5 h-5" />
+                  <span className="text-sm">Sign Out</span>
+                </div>
+              </Button>
+
+              {/* Reduce motion toggle for mobile */}
+              <div className="mt-3 flex items-center justify-between text-sm text-gray-300">
+                <span>Reduce Motion</span>
+                <button
+                  onClick={() => {
+                    try { const current = localStorage.getItem('motion:reduced'); const next = !(current && JSON.parse(current)); localStorage.setItem('motion:reduced', JSON.stringify(next)); window.location.reload(); } catch { }
+                  }}
+                  className="w-12 h-6 rounded-full bg-white/10 flex items-center p-1"
+                  aria-label="Toggle reduced motion"
+                >
+                  <motion.span className="w-4 h-4 bg-white rounded-full shadow" layout transition={{ type: 'spring', stiffness: 300 }} />
+                </button>
               </div>
-            </Button>
+            </div>
           </motion.div>
         )}
       </div>

@@ -429,22 +429,20 @@ export default function SeekerDashboard() {
         {loading ? (
           <div className="text-center text-gray-400">Loading jobs...</div>
         ) : (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-0 auto-rows-max"
-          >
-            {filteredJobs.map((job, idx) => (
-              <motion.div key={job._id} variants={itemVariants}>
-                <StackedJobCard
-                  job={job}
-                  onViewDetails={(id) => navigate(`/jobs/${id}`)}
-                  index={idx}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
+          <>
+            {/* Staggered animated list for jobs */}
+            <AnimatedList component="div" className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-0 auto-rows-max">
+              {filteredJobs.map((job, idx) => (
+                <div key={job._id}>
+                  <StackedJobCard
+                    job={job}
+                    onViewDetails={(id) => navigate(`/jobs/${id}`)}
+                    index={idx}
+                  />
+                </div>
+              ))}
+            </AnimatedList>
+          </>
         )}
 
         {!loading && filteredJobs.length === 0 && (

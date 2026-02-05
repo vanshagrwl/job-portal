@@ -163,11 +163,11 @@ export default function EmployerDashboard() {
                 </Link>
               </GlassCard>
             ) : (
-              <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
-                {jobs.map((job) => (
-                  <motion.div key={job._id} variants={itemVariants}>
-                    <GlassCard className="p-4 sm:p-6">
-                      <div className="flex justify-between items-start mb-3">
+              <AnimatedList component="div" className="space-y-4">
+                  {jobs.map((job) => (
+                    <div key={job._id}>
+                      <GlassCard className="p-4 sm:p-6">
+                        <div className="flex justify-between items-start mb-3">
                         <div>
                           <h3 className="text-lg font-semibold text-white mb-1">{job.title}</h3>
                           <div className="flex items-center space-x-4 text-sm text-gray-400">
@@ -206,9 +206,9 @@ export default function EmployerDashboard() {
                         </Link>
                       </div>
                     </GlassCard>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </AnimatedList>
             )}
           </div>
 
