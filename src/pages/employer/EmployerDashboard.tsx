@@ -163,9 +163,14 @@ export default function EmployerDashboard() {
                 </Link>
               </GlassCard>
             ) : (
-              <AnimatedList component="div" className="space-y-4">
-                  {jobs.map((job) => (
-                    <div key={job._id}>
+              <motion.div className="space-y-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+                {jobs.map((job, idx) => (
+                  <motion.div
+                    key={job._id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: idx * 0.05, duration: 0.4 }}
+                  >
                       <GlassCard className="p-4 sm:p-6">
                         <div className="flex justify-between items-start mb-3">
                         <div>
@@ -206,9 +211,9 @@ export default function EmployerDashboard() {
                         </Link>
                       </div>
                     </GlassCard>
-                  </div>
+                  </motion.div>
                 ))}
-              </AnimatedList>
+              </motion.div>
             )}
           </div>
 
