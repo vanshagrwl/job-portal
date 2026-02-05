@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure full page background coverage */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #020617;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #020617, #0f172a, #020617);
+}
+
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
