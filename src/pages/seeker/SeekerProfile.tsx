@@ -7,7 +7,8 @@ import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import PhoneInput from '../../components/PhoneInput';
-import { Upload, FileText, X, CheckCircle } from 'lucide-react';
+import { Upload, FileText, X, CheckCircle, Edit2 } from 'lucide-react';
+import EditNameModal from '../../components/EditNameModal';
 
 export default function SeekerProfilePage() {
   const { user, token, profile, updateProfile, refreshProfile } = useAuth();
@@ -22,6 +23,8 @@ export default function SeekerProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [resumeName, setResumeName] = useState('');
+  const [editNameOpen, setEditNameOpen] = useState(false);
+  const [editNameLoading, setEditNameLoading] = useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -67,6 +70,39 @@ export default function SeekerProfilePage() {
       } else {
         alert('Please upload a PDF or DOCX file');
       }
+    }
+  };
+
+  const handleSaveName = async (newName: string) => {
+    if (!newName.trim() || !token) {
+      throw new Error('Please enter a valid name');
+    }
+
+    setEditNameLoading(true);
+    try {
+      console.log('=== Updating seeker profile with name:', newName);
+      const result = await profileAPI.updateSeekerProfile({ full_name: newName }, token);
+      console.log('✓ API response received:', result);
+      
+      // Update local seeker profile state
+      setSeekerProfile(prev => prev ? { ...prev, full_name: newName } : null);
+      console.log('✓ Local seekerProfile state updated');
+      
+      // Update AuthContext profile
+      updateProfile({ full_name: newName });
+      console.log('✓ AuthContext profile updated');
+      
+      // Refresh from MongoDB to ensure we have the latest data
+      console.log('✓ Refreshing profile from MongoDB...');
+      await refreshProfile();
+      console.log('✓ Profile refreshed from MongoDB');
+      
+      alert('Name updated successfully!');
+    } catch (error: any) {
+      console.error('❌ Error updating name:', error);
+      throw new Error(error.message || 'Failed to update name');
+    } finally {
+      setEditNameLoading(false);
     }
   };
 
@@ -161,9 +197,20 @@ export default function SeekerProfilePage() {
       >
         {/* Header Section */}
         <motion.div variants={itemVariants} className="mb-8">
-          <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">My Profile</h1>
-            <p className="text-gray-400 text-sm sm:text-base">Keep your profile updated to attract employers</p>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">My Profile</h1>
+              <p className="text-gray-400 text-sm sm:text-base">Keep your profile updated to attract employers</p>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setEditNameOpen(true)}
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600/30 to-blue-600/30 hover:from-purple-600/50 hover:to-blue-600/50 text-purple-300 hover:text-purple-200 transition-all text-sm border border-purple-500/30 hover:border-purple-500/50 backdrop-blur-sm whitespace-nowrap shadow-lg hover:shadow-xl"
+            >
+              <Edit2 className="w-4 h-4" />
+              <span>Edit Name</span>
+            </motion.button>
           </div>
         </motion.div>
 
@@ -335,7 +382,16 @@ export default function SeekerProfilePage() {
         </motion.div>
       </motion.div>
 
-
+      {/* Edit Name Modal */}
+      <EditNameModal
+        isOpen={editNameOpen}
+        onClose={() => setEditNameOpen(false)}
+        currentName={profile?.full_name || ''}
+        onSave={handleSaveName}
+        loading={editNameLoading}
+        title="Edit Your Name"
+        label="Full Name"
+      />
     </Layout>
   );
 }

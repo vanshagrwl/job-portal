@@ -7,7 +7,8 @@ import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import PhoneInput from '../../components/PhoneInput';
-import { Building, Globe, MapPin } from 'lucide-react';
+import { Building, Globe, MapPin, Edit2 } from 'lucide-react';
+import EditNameModal from '../../components/EditNameModal';
 
 export default function EmployerProfilePage() {
   const { user, token, profile, updateProfile, refreshProfile } = useAuth();
@@ -21,6 +22,8 @@ export default function EmployerProfilePage() {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editNameOpen, setEditNameOpen] = useState(false);
+  const [editNameLoading, setEditNameLoading] = useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -45,6 +48,39 @@ export default function EmployerProfilePage() {
       console.error('Error fetching profile:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveName = async (newName: string) => {
+    if (!user || !token) {
+      throw new Error('User or token not available');
+    }
+
+    setEditNameLoading(true);
+    try {
+      console.log('=== Updating employer profile with name:', newName);
+      const result = await profileAPI.updateEmployerProfile({ full_name: newName }, token);
+      console.log('✓ API response received:', result);
+      
+      // Update local employer profile state
+      setEmployerProfile(prev => prev ? { ...prev, full_name: newName } : null);
+      console.log('✓ Local employerProfile state updated');
+      
+      // Update AuthContext
+      updateProfile({ full_name: newName });
+      console.log('✓ AuthContext profile updated');
+      
+      // Refresh from MongoDB to ensure we have the latest data
+      console.log('✓ Refreshing profile from MongoDB...');
+      await refreshProfile();
+      console.log('✓ Profile refreshed from MongoDB');
+      
+      alert('Name updated successfully!');
+    } catch (error: any) {
+      console.error('❌ Error updating name:', error.message);
+      throw new Error(error.message || 'Failed to update name. Please try again.');
+    } finally {
+      setEditNameLoading(false);
     }
   };
 
@@ -98,9 +134,20 @@ export default function EmployerProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto space-y-6"
       >
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Company Profile</h1>
-          <p className="text-gray-400">Manage your company information and contact details</p>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Company Profile</h1>
+            <p className="text-gray-400">Manage your company information and contact details</p>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setEditNameOpen(true)}
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600/30 to-blue-600/30 hover:from-purple-600/50 hover:to-blue-600/50 text-purple-300 hover:text-purple-200 transition-all text-sm border border-purple-500/30 hover:border-purple-500/50 backdrop-blur-sm whitespace-nowrap shadow-lg hover:shadow-xl"
+          >
+            <Edit2 className="w-4 h-4" />
+            <span>Edit Name</span>
+          </motion.button>
         </div>
 
         <GlassCard className="p-8">
@@ -204,7 +251,16 @@ export default function EmployerProfilePage() {
         </GlassCard>
       </motion.div>
 
-
+      {/* Edit Name Modal */}
+      <EditNameModal
+        isOpen={editNameOpen}
+        onClose={() => setEditNameOpen(false)}
+        currentName={profile?.full_name || ''}
+        onSave={handleSaveName}
+        loading={editNameLoading}
+        title="Edit Your Name"
+        label="Full Name"
+      />
     </Layout>
   );
 }
