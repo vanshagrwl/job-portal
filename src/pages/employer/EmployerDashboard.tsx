@@ -7,6 +7,7 @@ import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
 import { Plus, Briefcase, Users, Eye, TrendingUp, MapPin } from 'lucide-react';
+import ProfileCompletion from '../../components/ProfileCompletion';
 
 export default function EmployerDashboard() {
   const { user, token } = useAuth();
@@ -124,6 +125,10 @@ export default function EmployerDashboard() {
             </Button>
           </Link>
         </motion.div>
+
+        <div className="mt-4">
+          <ProfileCompletion />
+        </div>
 
         <motion.div
           variants={containerVariants}

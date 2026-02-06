@@ -22,3 +22,6 @@ export { default as Drawer } from './Drawer';
 export { default as RoleToggle } from './RoleToggle';
 export { default as StackedJobCard } from './StackedJobCard';
 export { default as FilterDrawer } from './FilterDrawer';
+export { default as DashboardStats } from './DashboardStats';
+export { default as ProfileCompletion } from './ProfileCompletion';
+export { default as Toast } from './Toast';

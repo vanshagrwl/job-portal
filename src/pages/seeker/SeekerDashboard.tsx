@@ -8,6 +8,8 @@ import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
 import { StackedJobCard } from '../../components';
 import FilterDrawer from '../../components/FilterDrawer';
+import DashboardStats from '../../components/DashboardStats';
+import ProfileCompletion from '../../components/ProfileCompletion';
 import { Search, Briefcase, MapPin, Clock, FileText, X } from 'lucide-react';
 
 interface SearchSuggestion {
@@ -231,6 +233,15 @@ export default function SeekerDashboard() {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">Find Your Dream Job</h1>
           <p className="text-gray-400 text-sm sm:text-base">Discover opportunities that match your skills</p>
         </motion.div>
+
+        {/* Profile progress & stats */}
+        <div className="mt-4">
+          <ProfileCompletion />
+        </div>
+
+        <div className="mt-6">
+          <DashboardStats />
+        </div>
 
         <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-2 sm:gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">

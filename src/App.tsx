@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ToastProvider } from './contexts/ToastContext';
 import { MotionPrefProvider } from './contexts/MotionPreferenceContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/Landing';
@@ -41,6 +42,7 @@ function App() {
     <MotionPrefProvider>
       <Router>
         <AuthProvider>
+          <ToastProvider>
           <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -129,6 +131,7 @@ function App() {
 
           <Route path="*" element={<Navigate to="/" />} />
           </Routes>
+          </ToastProvider>
         </AuthProvider>
       </Router>
     </MotionPrefProvider>
