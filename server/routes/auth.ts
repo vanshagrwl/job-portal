@@ -134,7 +134,7 @@ router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
   }
 });
 
-// Update User's Full Name - Direct MongoDB update
+// Update User's Full Name - DIRECT ENDPOINT
 router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     console.log('=== PUT /auth/profile called ===');
@@ -175,6 +175,19 @@ router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
 
     console.log('✓ Profile updated successfully in MongoDB');
     console.log('Updated profile full_name:', updatedProfile.full_name);
+    
+    // Verify the write was successful by re-fetching
+    const verifyProfile = await Profile.findById(req.userId);
+    console.log('✓ Verification fetch - full_name in DB:', verifyProfile?.full_name);
+    
+    if (verifyProfile?.full_name !== full_name.trim()) {
+      console.error('❌ VERIFICATION FAILED: Name did not persist!');
+      return res.status(500).json({ 
+        error: 'Failed to persist name change - verification failed',
+        stored: verifyProfile?.full_name,
+        expected: full_name.trim()
+      });
+    }
     
     // Disable caching to ensure client gets fresh data
     res.set('Cache-Control', 'no-cache, no-store, must-revalidate');

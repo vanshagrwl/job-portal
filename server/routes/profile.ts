@@ -74,11 +74,12 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
     // If full_name is provided, also update the Profile table
     if (full_name !== undefined && full_name.trim() !== '') {
       try {
-        console.log('Updating Profile.full_name for user:', req.userId);
+        console.log('=== UPDATING PROFILE.FULL_NAME ===');
+        console.log('User ID:', req.userId);
         console.log('New name:', full_name.trim());
         
-        // Use atomic update to ensure MongoDB persistence
-        const userProfile = await Profile.findByIdAndUpdate(
+        // Update Profile table with verification
+        const updatedUser = await Profile.findByIdAndUpdate(
           req.userId,
           { 
             full_name: full_name.trim(), 
@@ -90,17 +91,23 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
           }
         );
         
-        if (!userProfile) {
-          throw new Error('User profile not found for update');
+        if (!updatedUser) {
+          throw new Error('User profile not found');
         }
         
-        console.log('✓ Profile.full_name updated successfully');
-        console.log('Verification - Updated full_name in DB:', userProfile.full_name);
+        console.log('✓ Profile.full_name updated:', updatedUser.full_name);
+        
+        // Verify the write
+        const verified = await Profile.findById(req.userId);
+        console.log('✓ Verification - full_name in DB:', verified?.full_name);
+        
+        if (verified?.full_name !== full_name.trim()) {
+          throw new Error('Verification failed: Name did not persist');
+        }
       } catch (updateError: any) {
-        console.error('ERROR: Failed to update Profile.full_name:', updateError);
+        console.error('❌ ERROR updating Profile.full_name:', updateError.message);
         return res.status(500).json({ 
-          error: 'Failed to update name: ' + updateError.message,
-          details: updateError.message
+          error: 'Failed to update name: ' + updateError.message
         });
       }
     }
@@ -171,11 +178,12 @@ router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
     // If full_name is provided, also update the Profile table (personal name, not company name)
     if (full_name !== undefined && full_name.trim() !== '') {
       try {
-        console.log('Updating Profile.full_name for user:', req.userId);
+        console.log('=== UPDATING PROFILE.FULL_NAME ===');
+        console.log('User ID:', req.userId);
         console.log('New name:', full_name.trim());
         
-        // Use atomic update to ensure MongoDB persistence
-        const userProfile = await Profile.findByIdAndUpdate(
+        // Update Profile table with verification
+        const updatedUser = await Profile.findByIdAndUpdate(
           req.userId,
           { 
             full_name: full_name.trim(), 
@@ -187,17 +195,23 @@ router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
           }
         );
         
-        if (!userProfile) {
-          throw new Error('User profile not found for update');
+        if (!updatedUser) {
+          throw new Error('User profile not found');
         }
         
-        console.log('✓ Profile.full_name updated successfully');
-        console.log('Verification - Updated full_name in DB:', userProfile.full_name);
+        console.log('✓ Profile.full_name updated:', updatedUser.full_name);
+        
+        // Verify the write
+        const verified = await Profile.findById(req.userId);
+        console.log('✓ Verification - full_name in DB:', verified?.full_name);
+        
+        if (verified?.full_name !== full_name.trim()) {
+          throw new Error('Verification failed: Name did not persist');
+        }
       } catch (updateError: any) {
-        console.error('ERROR: Failed to update Profile.full_name:', updateError);
+        console.error('❌ ERROR updating Profile.full_name:', updateError.message);
         return res.status(500).json({ 
-          error: 'Failed to update name: ' + updateError.message,
-          details: updateError.message
+          error: 'Failed to update name: ' + updateError.message
         });
       }
     }
