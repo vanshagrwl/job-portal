@@ -33,53 +33,17 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
   try {
     const { skills, bio, location, phone, full_name } = req.body;
 
-    console.log('Update seeker profile request - userId:', req.userId);
-    console.log('Request body:', { skills, bio, location, phone, full_name });
-    console.log('File uploaded:', req.file ? { filename: req.file.filename, size: req.file.size } : 'No file');
+    console.log('=== UPDATE SEEKER PROFILE ===');
+    console.log('User ID:', req.userId);
+    console.log('Request includes full_name:', !!full_name);
 
-    let profile = await SeekerProfile.findOne({ user_id: req.userId });
-    
-    if (!profile) {
-      profile = new SeekerProfile({
-        user_id: req.userId
-      });
-    }
-
-    console.log('Profile before update:', profile);
-
-    if (skills !== undefined) {
-      profile.skills = typeof skills === 'string' ? JSON.parse(skills) : skills;
-    }
-    if (bio !== undefined) profile.bio = bio;
-    if (location !== undefined) profile.location = location;
-    if (phone !== undefined) profile.phone = phone;
-    
-    // Handle file upload
-    if (req.file) {
-      console.log('Processing file upload:', req.file.filename);
-      // Delete old resume if exists
-      if (profile.resume_url) {
-        const oldPath = path.join(__dirname, '../../uploads/resumes', path.basename(profile.resume_url));
-        console.log('Checking for old resume at:', oldPath);
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-          console.log('Old resume deleted');
-        }
-      }
-      // Store new resume URL
-      profile.resume_url = `/api/profile/resume/${req.file.filename}`;
-      console.log('Resume URL set to:', profile.resume_url);
-    }
-    
-    // If full_name is provided, also update the Profile table
+    // CRITICAL: Update full_name FIRST with verification and write concern
+    let updatedFullName = null;
     if (full_name !== undefined && full_name.trim() !== '') {
       try {
-        console.log('=== UPDATING PROFILE.FULL_NAME ===');
-        console.log('User ID:', req.userId);
-        console.log('New name:', full_name.trim());
+        console.log('Step 1: Updating Profile.full_name to:', full_name.trim());
         
-        // Update Profile table with verification
-        const updatedUser = await Profile.findByIdAndUpdate(
+        const profileUpdate = await Profile.findByIdAndUpdate(
           req.userId,
           { 
             full_name: full_name.trim(), 
@@ -91,47 +55,77 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
           }
         );
         
-        if (!updatedUser) {
-          throw new Error('User profile not found');
+        if (!profileUpdate) {
+          throw new Error('User not found');
         }
         
-        console.log('✓ Profile.full_name updated:', updatedUser.full_name);
+        updatedFullName = profileUpdate.full_name;
+        console.log('✓ Profile.full_name updated:', updatedFullName);
         
-        // Verify the write
-        const verified = await Profile.findById(req.userId);
-        console.log('✓ Verification - full_name in DB:', verified?.full_name);
+        // Wait 50ms for MongoDB to flush write
+        await new Promise(resolve => setTimeout(resolve, 50));
+        console.log('✓ Waited for write flush');
         
-        if (verified?.full_name !== full_name.trim()) {
-          throw new Error('Verification failed: Name did not persist');
+        // Verify immediately after flush
+        const verify = await Profile.findById(req.userId).lean();
+        if (verify?.full_name !== full_name.trim()) {
+          console.error('❌ Verification FAILED - stored:', verify?.full_name, 'expected:', full_name.trim());
+          throw new Error('Verification failed: name did not persist to MongoDB');
         }
-      } catch (updateError: any) {
-        console.error('❌ ERROR updating Profile.full_name:', updateError.message);
-        return res.status(500).json({ 
-          error: 'Failed to update name: ' + updateError.message
-        });
+        console.log('✓ Verification passed:', verify?.full_name);
+        
+      } catch (nameError: any) {
+        console.error('❌ Full name update failed:', nameError.message);
+        return res.status(500).json({ error: 'Failed to update name: ' + nameError.message });
       }
+    }
+
+    console.log('Step 2: Updating SeekerProfile...');
+    
+    let profile = await SeekerProfile.findOne({ user_id: req.userId });
+    
+    if (!profile) {
+      profile = new SeekerProfile({
+        user_id: req.userId
+      });
+    }
+
+    if (skills !== undefined) {
+      profile.skills = typeof skills === 'string' ? JSON.parse(skills) : skills;
+    }
+    if (bio !== undefined) profile.bio = bio;
+    if (location !== undefined) profile.location = location;
+    if (phone !== undefined) profile.phone = phone;
+    
+    // Handle file upload
+    if (req.file) {
+      console.log('Processing file upload:', req.file.filename);
+      if (profile.resume_url) {
+        const oldPath = path.join(__dirname, '../../uploads/resumes', path.basename(profile.resume_url));
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+      profile.resume_url = `/api/profile/resume/${req.file.filename}`;
     }
     
     profile.updated_at = new Date();
-    console.log('Seeker profile before save:', profile);
     const savedProfile = await profile.save();
     
-    console.log('Seeker profile saved successfully:', savedProfile);
-    let response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
+    console.log('✓ SeekerProfile saved');
     
-    // If full_name was updated, fetch the latest Profile to include it in response
-    if (full_name !== undefined) {
-      const userProfile = await Profile.findById(req.userId);
-      if (userProfile) {
-        response.full_name = userProfile.full_name;
-        console.log('✓ Response includes full_name:', response.full_name);
-      }
+    // Build response with verified full_name
+    const response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
+    if (updatedFullName) {
+      response.full_name = updatedFullName;
     }
     
+    console.log('Step 3: Sending response with full_name:', response.full_name);
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.json(response);
+    
   } catch (error: any) {
-    console.error('Error updating seeker profile:', error);
-    console.error('Error details:', error.message, error.stack);
+    console.error('❌ Error updating seeker profile:', error.message);
     res.status(500).json({ error: error.message || 'Failed to update profile' });
   }
 });
@@ -155,8 +149,54 @@ router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
   try {
     const { company_name, company_logo_url, about_company, industry, company_size, website, location, phone, full_name } = req.body;
 
-    console.log('Update employer profile - userId:', req.userId);
-    console.log('Request body:', { company_name, full_name });
+    console.log('=== UPDATE EMPLOYER PROFILE ===');
+    console.log('User ID:', req.userId);
+    console.log('Request includes full_name:', !!full_name);
+
+    // CRITICAL: Update full_name FIRST with verification and write concern
+    let updatedFullName = null;
+    if (full_name !== undefined && full_name.trim() !== '') {
+      try {
+        console.log('Step 1: Updating Profile.full_name to:', full_name.trim());
+        
+        const profileUpdate = await Profile.findByIdAndUpdate(
+          req.userId,
+          { 
+            full_name: full_name.trim(), 
+            updated_at: new Date() 
+          },
+          { 
+            new: true,
+            runValidators: true
+          }
+        );
+        
+        if (!profileUpdate) {
+          throw new Error('User not found');
+        }
+        
+        updatedFullName = profileUpdate.full_name;
+        console.log('✓ Profile.full_name updated:', updatedFullName);
+        
+        // Wait 50ms for MongoDB to flush write
+        await new Promise(resolve => setTimeout(resolve, 50));
+        console.log('✓ Waited for write flush');
+        
+        // Verify immediately after flush
+        const verify = await Profile.findById(req.userId).lean();
+        if (verify?.full_name !== full_name.trim()) {
+          console.error('❌ Verification FAILED - stored:', verify?.full_name, 'expected:', full_name.trim());
+          throw new Error('Verification failed: name did not persist to MongoDB');
+        }
+        console.log('✓ Verification passed:', verify?.full_name);
+        
+      } catch (nameError: any) {
+        console.error('❌ Full name update failed:', nameError.message);
+        return res.status(500).json({ error: 'Failed to update name: ' + nameError.message });
+      }
+    }
+
+    console.log('Step 2: Updating EmployerProfile...');
 
     let profile = await EmployerProfile.findOne({ user_id: req.userId });
     
@@ -175,64 +215,23 @@ router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
     if (location !== undefined) profile.location = location;
     if (phone !== undefined) profile.phone = phone;
     
-    // If full_name is provided, also update the Profile table (personal name, not company name)
-    if (full_name !== undefined && full_name.trim() !== '') {
-      try {
-        console.log('=== UPDATING PROFILE.FULL_NAME ===');
-        console.log('User ID:', req.userId);
-        console.log('New name:', full_name.trim());
-        
-        // Update Profile table with verification
-        const updatedUser = await Profile.findByIdAndUpdate(
-          req.userId,
-          { 
-            full_name: full_name.trim(), 
-            updated_at: new Date() 
-          },
-          { 
-            new: true,
-            runValidators: true
-          }
-        );
-        
-        if (!updatedUser) {
-          throw new Error('User profile not found');
-        }
-        
-        console.log('✓ Profile.full_name updated:', updatedUser.full_name);
-        
-        // Verify the write
-        const verified = await Profile.findById(req.userId);
-        console.log('✓ Verification - full_name in DB:', verified?.full_name);
-        
-        if (verified?.full_name !== full_name.trim()) {
-          throw new Error('Verification failed: Name did not persist');
-        }
-      } catch (updateError: any) {
-        console.error('❌ ERROR updating Profile.full_name:', updateError.message);
-        return res.status(500).json({ 
-          error: 'Failed to update name: ' + updateError.message
-        });
-      }
-    }
-    
     profile.updated_at = new Date();
     const savedProfile = await profile.save();
-
-    // If full_name was updated, fetch the latest Profile to include it in response
-    let response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
     
-    if (full_name !== undefined) {
-      const userProfile = await Profile.findById(req.userId);
-      if (userProfile) {
-        response.full_name = userProfile.full_name;
-        console.log('✓ Response includes full_name:', response.full_name);
-      }
+    console.log('✓ EmployerProfile saved');
+
+    // Build response with verified full_name
+    const response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
+    if (updatedFullName) {
+      response.full_name = updatedFullName;
     }
     
+    console.log('Step 3: Sending response with full_name:', response.full_name);
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.json(response);
+    
   } catch (error: any) {
-    console.error('Error updating employer profile:', error);
+    console.error('❌ Error updating employer profile:', error.message);
     res.status(500).json({ error: error.message || 'Failed to update profile' });
   }
 });

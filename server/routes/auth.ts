@@ -176,12 +176,17 @@ router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
     console.log('✓ Profile updated successfully in MongoDB');
     console.log('Updated profile full_name:', updatedProfile.full_name);
     
-    // Verify the write was successful by re-fetching
+    // Wait 50ms for MongoDB to flush write to disk
+    await new Promise(resolve => setTimeout(resolve, 50));
+    console.log('✓ Waited for write flush');
+    
+    // Verify the write was successful by re-fetching after flush
     const verifyProfile = await Profile.findById(req.userId);
     console.log('✓ Verification fetch - full_name in DB:', verifyProfile?.full_name);
     
     if (verifyProfile?.full_name !== full_name.trim()) {
       console.error('❌ VERIFICATION FAILED: Name did not persist!');
+      console.error('Details - Stored:', verifyProfile?.full_name, 'Expected:', full_name.trim());
       return res.status(500).json({ 
         error: 'Failed to persist name change - verification failed',
         stored: verifyProfile?.full_name,
