@@ -129,18 +129,8 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
     
     // Build response with verified full_name
     const response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
-    
-    // IMPORTANT: Always include the updated full_name in response
     if (updatedFullName) {
       response.full_name = updatedFullName;
-      console.log('✓ Response includes updated full_name:', updatedFullName);
-    } else {
-      // If no full_name was updated in this request, fetch it from Profile to include in response
-      const userProfile = await Profile.findById(req.userId).lean();
-      if (userProfile?.full_name) {
-        response.full_name = userProfile.full_name;
-        console.log('✓ Response includes current full_name from Profile:', userProfile.full_name);
-      }
     }
     
     console.log('Step 3: Sending response with full_name:', response.full_name);
@@ -258,18 +248,8 @@ router.put('/employer', authMiddleware, async (req: AuthRequest, res: Response) 
 
     // Build response with verified full_name
     const response = savedProfile.toObject ? savedProfile.toObject() : savedProfile;
-    
-    // IMPORTANT: Always include the updated full_name in response
     if (updatedFullName) {
       response.full_name = updatedFullName;
-      console.log('✓ Response includes updated full_name:', updatedFullName);
-    } else {
-      // If no full_name was updated in this request, fetch it from Profile to include in response
-      const userProfile = await Profile.findById(req.userId).lean();
-      if (userProfile?.full_name) {
-        response.full_name = userProfile.full_name;
-        console.log('✓ Response includes current full_name from Profile:', userProfile.full_name);
-      }
     }
     
     console.log('Step 3: Sending response with full_name:', response.full_name);

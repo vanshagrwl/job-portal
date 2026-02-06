@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { SeekerProfile as SeekerProfileType, profileAPI, API_URL } from '../../lib/api';
+import { SeekerProfile as SeekerProfileType, profileAPI, authAPI, API_URL } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
@@ -83,37 +83,38 @@ export default function SeekerProfilePage() {
       console.log('=== SEEKER PROFILE: Step 1 - Calling updateSeekerProfile with name:', newName);
       const apiResponse = await profileAPI.updateSeekerProfile({ full_name: newName }, token);
       console.log('✓ SEEKER PROFILE: Step 2 - API response received:', apiResponse);
-      
+
       // Extract full_name from response (should be set by backend)
       const responseFullName = apiResponse?.full_name || newName;
       console.log('✓ SEEKER PROFILE: Step 3 - Response contains full_name:', responseFullName);
-      
+
+      // Also update the central Profile via auth API to ensure consistency
+      try {
+        const authResp = await authAPI.updateProfile(responseFullName, token);
+        console.log('✓ SEEKER PROFILE: Step 4 - authAPI.updateProfile response:', authResp);
+        updateProfile({ full_name: authResp?.full_name || responseFullName });
+        console.log('✓ SEEKER PROFILE: Step 5 - AuthContext updated with:', authResp?.full_name || responseFullName);
+      } catch (authErr) {
+        console.warn('SEEKER PROFILE: authAPI.updateProfile failed, continuing with profile API response', authErr);
+        updateProfile({ full_name: responseFullName });
+      }
+
       // Update local state with response data to ensure consistency
       setSeekerProfile(prev => prev ? { ...prev, ...apiResponse, full_name: responseFullName } : null);
-      console.log('✓ SEEKER PROFILE: Step 4 - Local state updated with response data');
-      
-      // Update AuthContext immediately with confirmed value
-      updateProfile({ full_name: responseFullName });
-      console.log('✓ SEEKER PROFILE: Step 5 - AuthContext updated with:', responseFullName);
-      
-      // Wait to ensure backend write is complete
-      await new Promise(resolve => setTimeout(resolve, 100));
-      console.log('✓ SEEKER PROFILE: Step 6 - Write confirmation wait complete');
-      
+      console.log('✓ SEEKER PROFILE: Step 6 - Local state updated with response data');
+
+      // Wait briefly to ensure backend write is durable
+      await new Promise(resolve => setTimeout(resolve, 150));
+
       // Refresh ENTIRE profile from MongoDB
-      console.log('✓ SEEKER PROFILE: Step 7 - Refreshing complete profile from MongoDB...');
       await refreshProfile();
-      console.log('✓ SEEKER PROFILE: Step 8 - Profile refreshed from context');
-      
-      // Fetch fresh seeker profile to ensure full_name is included
       const updatedData = await profileAPI.getSeekerProfile(token);
-      console.log('✓ SEEKER PROFILE: Step 9 - Fresh seeker profile fetched:', updatedData?.full_name);
+      console.log('✓ SEEKER PROFILE: Step 7 - Fresh seeker profile fetched:', updatedData?.full_name);
       setSeekerProfile(updatedData);
-      console.log('✓ SEEKER PROFILE: Step 10 - Local seeker profile state updated');
-      
+
       alert('Name updated successfully!');
     } catch (error: any) {
-      console.error('❌ SEEKER PROFILE: Error updating name:', error);
+      console.error('❌ SEEKER PROFILE: Error updating name:', error.message || error);
       throw new Error(error.message || 'Failed to update name');
     } finally {
       setEditNameLoading(false);
