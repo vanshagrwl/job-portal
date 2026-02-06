@@ -32,7 +32,7 @@ export default function Card({
 
   return (
     <motion.div
-      className={`bg-white backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg relative overflow-hidden group ${className}`}
+      className={`bg-white backdrop-blur-sm border border-gray-200 rounded-2xl shadow-depth-lg relative overflow-hidden group ${className}`}
       initial={props.initial ?? motionCfg.cardInitial}
       animate={props.animate ?? motionCfg.cardAnimate}
       exit={props.exit}

@@ -178,11 +178,12 @@ export default function Landing() {
 
       <div className="container mx-auto px-4 pt-32 pb-20 relative z-10">
         {/* Hero Section */}
+        <div className={`absolute inset-0 -top-40 -left-20 -right-20 rounded-3xl pointer-events-none ${selectedRole === 'seeker' ? 'gradient-overlay-seeker' : 'gradient-overlay-employer'}`} />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-20"
+          className="text-center mb-20 relative z-10"
         >
           <motion.div
             custom={0}
@@ -342,8 +343,10 @@ export default function Landing() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
+          className="relative"
         >
-          <GlassCard className="p-12 text-center">
+          <div className={`absolute inset-0 -top-20 -left-20 -right-20 rounded-3xl pointer-events-none ${selectedRole === 'seeker' ? 'gradient-overlay-success' : 'gradient-overlay-warning'}`} />
+          <GlassCard className="p-12 text-center relative z-10">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Ready to Transform Your Career?
             </h2>

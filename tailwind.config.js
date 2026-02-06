@@ -114,6 +114,21 @@ export default {
         'lift-seeker': '0 20px 40px rgba(124, 58, 237, 0.2)',
         'glow-employer': '0 0 30px rgba(30, 58, 138, 0.4)',
         'glow-seeker': '0 0 30px rgba(124, 58, 237, 0.4)',
+        // Depth System Shadows
+        'depth-xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'depth-sm': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        'depth-md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'depth-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'depth-xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'depth-2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        // Glass Morphism Shadows
+        'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
+        'glass-inset': 'inset 0 8px 32px rgba(255, 255, 255, 0.1)',
+        // Hover/Interactive Shadows
+        'hover-md': '0 10px 20px -5px rgba(0, 0, 0, 0.15), 0 5px 10px -3px rgba(0, 0, 0, 0.1)',
+        'hover-lg': '0 15px 30px -5px rgba(0, 0, 0, 0.2), 0 10px 15px -5px rgba(0, 0, 0, 0.1)',
+        'hover-employer': '0 15px 30px -5px rgba(30, 58, 138, 0.25), 0 10px 15px -5px rgba(59, 130, 246, 0.15)',
+        'hover-seeker': '0 15px 30px -5px rgba(124, 58, 237, 0.25), 0 10px 15px -5px rgba(167, 139, 250, 0.15)',
       },
       backdropBlur: {
         'xl': '20px',

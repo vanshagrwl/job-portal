@@ -59,6 +59,57 @@ html {
     @apply shadow-2xl shadow-blue-500/40 transition-all duration-300;
   }
 
+  /* Gradient Overlay Utilities */
+  .gradient-overlay-seeker {
+    @apply bg-gradient-to-b from-violet-900/50 via-transparent to-transparent;
+  }
+
+  .gradient-overlay-employer {
+    @apply bg-gradient-to-b from-blue-900/50 via-transparent to-transparent;
+  }
+
+  .gradient-overlay-hero {
+    @apply bg-gradient-to-br from-violet-900/40 via-blue-900/30 to-transparent;
+  }
+
+  .gradient-overlay-success {
+    @apply bg-gradient-to-b from-emerald-900/30 via-transparent to-transparent;
+  }
+
+  .gradient-overlay-warning {
+    @apply bg-gradient-to-b from-amber-900/30 via-transparent to-transparent;
+  }
+
+  /* Card Depth Shadows */
+  .card-shadow-sm {
+    @apply shadow-depth-sm;
+  }
+
+  .card-shadow-md {
+    @apply shadow-depth-md;
+  }
+
+  .card-shadow-lg {
+    @apply shadow-depth-lg;
+  }
+
+  .card-shadow-xl {
+    @apply shadow-depth-xl;
+  }
+
+  /* Interactive Card Hover States */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-hover-md hover:translate-y-[-4px];
+  }
+
+  .card-hover-employer {
+    @apply transition-all duration-300 hover:shadow-hover-employer hover:translate-y-[-4px];
+  }
+
+  .card-hover-seeker {
+    @apply transition-all duration-300 hover:shadow-hover-seeker hover:translate-y-[-4px];
+  }
+
   /* Smooth backdrop blur */
   .backdrop-blur-xl {
     @apply transition-all duration-300;
