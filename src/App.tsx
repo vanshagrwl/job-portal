@@ -18,7 +18,7 @@ import EmployerApplications from './pages/employer/EmployerApplications';
 import ApplicationReview from './pages/employer/ApplicationReview';
 
 function DashboardRouter() {
-  const { profile, loading } = useAuth();
+  const { profile, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -27,12 +27,11 @@ function DashboardRouter() {
       </div>
     );
   }
+  // Prefer the authoritative profile role, fall back to signed-in user role
+  const role = profile?.role || user?.role;
 
-  if (profile?.role === 'seeker') {
-    return <SeekerDashboard />;
-  } else if (profile?.role === 'employer') {
-    return <EmployerDashboard />;
-  }
+  if (role === 'seeker') return <SeekerDashboard />;
+  if (role === 'employer') return <EmployerDashboard />;
 
   return <Navigate to="/login" />;
 }
