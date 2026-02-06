@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import GlassCard from './GlassCard';
-import Button from './Button';
 import { applicationsAPI, jobsAPI } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { Briefcase, Users, Eye, CheckCircle } from 'lucide-react';
 
 export default function DashboardStats() {
-  const { token, user } = useAuth();
+  const { token, user, profile } = useAuth();
   const [myAppsCount, setMyAppsCount] = useState(0);
   const [openJobsCount, setOpenJobsCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
@@ -16,20 +15,37 @@ export default function DashboardStats() {
 
     const load = async () => {
       try {
-        const apps = await applicationsAPI.getMyApplications(token);
-        setMyAppsCount(apps?.length || 0);
+        // Load seeker applications
+        if (profile?.role === 'seeker') {
+          try {
+            const apps = await applicationsAPI.getMyApplications(token);
+            setMyAppsCount(apps?.length || 0);
+          } catch (e) {
+            console.warn('Failed to load seeker apps', e);
+            setMyAppsCount(0);
+          }
+        }
 
-        const allJobs = await jobsAPI.getAll();
-        const myJobs = allJobs.filter((j: any) => j.employer_id === user._id);
-        setOpenJobsCount(myJobs.filter((j: any) => j.status === 'active').length);
-
-        // pending for employer: fetch employer apps
+        // Load jobs (for both seeker and employer)
         try {
-          const empApps = await applicationsAPI.getEmployerApplications(token);
-          setPendingCount(empApps?.filter((a: any) => a.status === 'pending').length || 0);
+          const allJobs = await jobsAPI.getAll();
+          if (profile?.role === 'employer') {
+            const myJobs = allJobs.filter((j: any) => j.employer_id === user._id);
+            setOpenJobsCount(myJobs.filter((j: any) => j.status === 'active').length);
+          }
         } catch (e) {
-          // ignore if not employer
-          setPendingCount(0);
+          console.warn('Failed to load jobs', e);
+        }
+
+        // Load employer applications
+        if (profile?.role === 'employer') {
+          try {
+            const empApps = await applicationsAPI.getEmployerApplications(token);
+            setPendingCount(empApps?.filter((a: any) => a.status === 'pending').length || 0);
+          } catch (e) {
+            console.warn('Failed to load employer apps', e);
+            setPendingCount(0);
+          }
         }
       } catch (e) {
         console.error('Error loading dashboard stats', e);
@@ -37,7 +53,7 @@ export default function DashboardStats() {
     };
 
     load();
-  }, [token, user]);
+  }, [token, user, profile?.role]);
 
   const stats = [
     { label: 'My Applications', value: myAppsCount, icon: Users, color: 'from-blue-600 to-cyan-500' },
