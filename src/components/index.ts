@@ -45,3 +45,8 @@ export {
   ColorBlindSimulator, 
   AccessibilityAudit 
 } from './AccessibilityAudit';
+export { 
+  AnimatedSearchInput, 
+  AnimatedFilterButton, 
+  AnimatedFilterDrawer 
+} from './SearchFilterAnimations';
