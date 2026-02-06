@@ -38,12 +38,22 @@ export default function EditNameModal({
 
     try {
       setError('');
+      console.log('=== Modal: Starting name save process');
       await onSave(newName.trim());
+      console.log('=== Modal: onSave completed successfully');
+      
+      // Wait for React to process state updates
+      await new Promise(resolve => setTimeout(resolve, 200));
+      console.log('=== Modal: State update processing complete');
+      
+      // Now close the modal
       onClose();
+      console.log('=== Modal: Modal closed');
     } catch (err: any) {
       console.error('Modal save error:', err);
       const errorMsg = err.message || 'Failed to update name';
       setError(errorMsg);
+      console.error('Modal error displayed:', errorMsg);
     }
   };
 

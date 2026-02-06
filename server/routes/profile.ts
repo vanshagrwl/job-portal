@@ -17,11 +17,24 @@ const router = express.Router();
 // Get seeker profile
 router.get('/seeker', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const profile = await SeekerProfile.findOne({ user_id: req.userId });
+    console.log('GET /profile/seeker - User ID:', req.userId);
+    const [profile, userProfile] = await Promise.all([
+      SeekerProfile.findOne({ user_id: req.userId }),
+      Profile.findById(req.userId).lean()
+    ]);
+    
     if (!profile) {
       return res.status(404).json({ error: 'Profile not found' });
     }
-    res.json(profile);
+    
+    // Combine seeker profile with full_name from Profile collection
+    const response = profile.toObject ? profile.toObject() : profile;
+    if (userProfile?.full_name) {
+      response.full_name = userProfile.full_name;
+      console.log('✓ GET /seeker - Included full_name:', userProfile.full_name);
+    }
+    
+    res.json(response);
   } catch (error: any) {
     console.error('Error fetching seeker profile:', error);
     res.status(500).json({ error: error.message || 'Failed to fetch profile' });
@@ -133,14 +146,27 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
 // Get employer profile
 router.get('/employer', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const profile = await EmployerProfile.findOne({ user_id: req.userId });
+    console.log('GET /profile/employer - User ID:', req.userId);
+    const [profile, userProfile] = await Promise.all([
+      EmployerProfile.findOne({ user_id: req.userId }),
+      Profile.findById(req.userId).lean()
+    ]);
+    
     if (!profile) {
       return res.status(404).json({ error: 'Profile not found' });
     }
-    res.json(profile);
+    
+    // Combine employer profile with full_name from Profile collection
+    const response = profile.toObject ? profile.toObject() : profile;
+    if (userProfile?.full_name) {
+      response.full_name = userProfile.full_name;
+      console.log('✓ GET /employer - Included full_name:', userProfile.full_name);
+    }
+    
+    res.json(response);
   } catch (error: any) {
     console.error('Error fetching employer profile:', error);
-    res.status(500).json({ error: error.message || 'Failed to fetch profile' });
+    res.status(404).json({ error: 'Profile not found' });
   }
 });
 
