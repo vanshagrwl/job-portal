@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { SeekerProfile as SeekerProfileType, profileAPI, authAPI, API_URL } from '../../lib/api';
+import { SeekerProfile as SeekerProfileType, profileAPI, API_URL } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import PhoneInput from '../../components/PhoneInput';
-import { Upload, FileText, X, CheckCircle, Edit2 } from 'lucide-react';
-import EditNameModal from '../../components/EditNameModal';
+import { Upload, FileText, X, CheckCircle } from 'lucide-react';
 
 export default function SeekerProfilePage() {
   const { user, token, profile, updateProfile, refreshProfile } = useAuth();
@@ -23,8 +22,6 @@ export default function SeekerProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [resumeName, setResumeName] = useState('');
-  const [editNameOpen, setEditNameOpen] = useState(false);
-  const [editNameLoading, setEditNameLoading] = useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -70,54 +67,6 @@ export default function SeekerProfilePage() {
       } else {
         alert('Please upload a PDF or DOCX file');
       }
-    }
-  };
-
-  const handleSaveName = async (newName: string) => {
-    if (!newName.trim() || !token) {
-      throw new Error('Please enter a valid name');
-    }
-
-    setEditNameLoading(true);
-    try {
-      console.log('=== SEEKER PROFILE: Step 1 - Calling updateSeekerProfile with name:', newName);
-      const apiResponse = await profileAPI.updateSeekerProfile({ full_name: newName }, token);
-      console.log('✓ SEEKER PROFILE: Step 2 - API response received:', apiResponse);
-
-      // Extract full_name from response (should be set by backend)
-      const responseFullName = apiResponse?.full_name || newName;
-      console.log('✓ SEEKER PROFILE: Step 3 - Response contains full_name:', responseFullName);
-
-      // Also update the central Profile via auth API to ensure consistency
-      try {
-        const authResp = await authAPI.updateProfile(responseFullName, token);
-        console.log('✓ SEEKER PROFILE: Step 4 - authAPI.updateProfile response:', authResp);
-        updateProfile({ full_name: authResp?.full_name || responseFullName });
-        console.log('✓ SEEKER PROFILE: Step 5 - AuthContext updated with:', authResp?.full_name || responseFullName);
-      } catch (authErr) {
-        console.warn('SEEKER PROFILE: authAPI.updateProfile failed, continuing with profile API response', authErr);
-        updateProfile({ full_name: responseFullName });
-      }
-
-      // Update local state with response data to ensure consistency
-      setSeekerProfile(prev => prev ? { ...prev, ...apiResponse, full_name: responseFullName } : null);
-      console.log('✓ SEEKER PROFILE: Step 6 - Local state updated with response data');
-
-      // Wait briefly to ensure backend write is durable
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      // Refresh ENTIRE profile from MongoDB
-      await refreshProfile();
-      const updatedData = await profileAPI.getSeekerProfile(token);
-      console.log('✓ SEEKER PROFILE: Step 7 - Fresh seeker profile fetched:', updatedData?.full_name);
-      setSeekerProfile(updatedData);
-
-      alert('Name updated successfully!');
-    } catch (error: any) {
-      console.error('❌ SEEKER PROFILE: Error updating name:', error.message || error);
-      throw new Error(error.message || 'Failed to update name');
-    } finally {
-      setEditNameLoading(false);
     }
   };
 
@@ -212,21 +161,8 @@ export default function SeekerProfilePage() {
       >
         {/* Header Section */}
         <motion.div variants={itemVariants} className="mb-8">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">My Profile</h1>
-              <p className="text-gray-400 text-sm sm:text-base">Keep your profile updated to attract employers</p>
-            </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setEditNameOpen(true)}
-              className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600/30 to-blue-600/30 hover:from-purple-600/50 hover:to-blue-600/50 text-purple-300 hover:text-purple-200 transition-all text-sm border border-purple-500/30 hover:border-purple-500/50 backdrop-blur-sm whitespace-nowrap shadow-lg hover:shadow-xl"
-            >
-              <Edit2 className="w-4 h-4" />
-              <span>Edit Name</span>
-            </motion.button>
-          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">My Profile</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Keep your profile updated to attract employers</p>
         </motion.div>
 
         {/* Main Card */}
@@ -397,16 +333,6 @@ export default function SeekerProfilePage() {
         </motion.div>
       </motion.div>
 
-      {/* Edit Name Modal */}
-      <EditNameModal
-        isOpen={editNameOpen}
-        onClose={() => setEditNameOpen(false)}
-        currentName={profile?.full_name || ''}
-        onSave={handleSaveName}
-        loading={editNameLoading}
-        title="Edit Your Name"
-        label="Full Name"
-      />
     </Layout>
   );
 }

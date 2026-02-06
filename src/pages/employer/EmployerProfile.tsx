@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { EmployerProfile as EmployerProfileType, profileAPI, authAPI } from '../../lib/api';
+import { EmployerProfile as EmployerProfileType, profileAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import PhoneInput from '../../components/PhoneInput';
-import { Building, Globe, MapPin, Edit2 } from 'lucide-react';
-import EditNameModal from '../../components/EditNameModal';
+import { Building, Globe, MapPin } from 'lucide-react';
 
 export default function EmployerProfilePage() {
   const { user, token, profile, updateProfile, refreshProfile } = useAuth();
@@ -22,8 +21,6 @@ export default function EmployerProfilePage() {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [editNameOpen, setEditNameOpen] = useState(false);
-  const [editNameLoading, setEditNameLoading] = useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -48,55 +45,6 @@ export default function EmployerProfilePage() {
       console.error('Error fetching profile:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSaveName = async (newName: string) => {
-    if (!user || !token) {
-      throw new Error('User or token not available');
-    }
-
-    setEditNameLoading(true);
-    try {
-      console.log('=== EMPLOYER PROFILE: Step 1 - Calling updateEmployerProfile with name:', newName);
-      const apiResponse = await profileAPI.updateEmployerProfile({ full_name: newName }, token);
-      console.log('✓ EMPLOYER PROFILE: Step 2 - API response received:', apiResponse);
-
-      // Extract full_name from response (should be set by backend)
-      const responseFullName = apiResponse?.full_name || newName;
-      console.log('✓ EMPLOYER PROFILE: Step 3 - Response contains full_name:', responseFullName);
-
-      // Also update the central Profile via auth API to ensure consistency
-      try {
-        const authResp = await authAPI.updateProfile(responseFullName, token);
-        console.log('✓ EMPLOYER PROFILE: Step 4 - authAPI.updateProfile response:', authResp);
-        // Update AuthContext with confirmed value from auth endpoint
-        updateProfile({ full_name: authResp?.full_name || responseFullName });
-        console.log('✓ EMPLOYER PROFILE: Step 5 - AuthContext updated with:', authResp?.full_name || responseFullName);
-      } catch (authErr) {
-        console.warn('EMPLOYER PROFILE: authAPI.updateProfile failed, continuing with profile API response', authErr);
-        updateProfile({ full_name: responseFullName });
-      }
-
-      // Update local employer profile state with authoritative response
-      setEmployerProfile(prev => prev ? { ...prev, ...apiResponse, full_name: responseFullName } : null);
-      console.log('✓ EMPLOYER PROFILE: Step 6 - Local state updated with response data');
-
-      // Wait briefly to ensure backend write is durable
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      // Refresh context/profile to ensure UI pulls latest server copy
-      await refreshProfile();
-      const updatedData = await profileAPI.getEmployerProfile(token);
-      console.log('✓ EMPLOYER PROFILE: Step 7 - Fresh employer profile fetched:', updatedData?.full_name);
-      setEmployerProfile(updatedData);
-
-      alert('Name updated successfully!');
-    } catch (error: any) {
-      console.error('❌ EMPLOYER PROFILE: Error updating name:', error.message || error);
-      throw new Error(error.message || 'Failed to update name. Please try again.');
-    } finally {
-      setEditNameLoading(false);
     }
   };
 
@@ -150,20 +98,9 @@ export default function EmployerProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto space-y-6"
       >
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Company Profile</h1>
-            <p className="text-gray-400">Manage your company information and contact details</p>
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setEditNameOpen(true)}
-            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600/30 to-blue-600/30 hover:from-purple-600/50 hover:to-blue-600/50 text-purple-300 hover:text-purple-200 transition-all text-sm border border-purple-500/30 hover:border-purple-500/50 backdrop-blur-sm whitespace-nowrap shadow-lg hover:shadow-xl"
-          >
-            <Edit2 className="w-4 h-4" />
-            <span>Edit Name</span>
-          </motion.button>
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Company Profile</h1>
+          <p className="text-gray-400">Manage your company information and contact details</p>
         </div>
 
         <GlassCard className="p-8">
@@ -267,16 +204,6 @@ export default function EmployerProfilePage() {
         </GlassCard>
       </motion.div>
 
-      {/* Edit Name Modal */}
-      <EditNameModal
-        isOpen={editNameOpen}
-        onClose={() => setEditNameOpen(false)}
-        currentName={profile?.full_name || ''}
-        onSave={handleSaveName}
-        loading={editNameLoading}
-        title="Edit Your Name"
-        label="Full Name"
-      />
     </Layout>
   );
 }
