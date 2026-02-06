@@ -6,6 +6,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
+import { ApplicationTimeline } from '../../components';
+import { ApplicationTimeline } from '../../components';
 import { ArrowLeft, Mail, Phone, MapPin, Download, Check, X, Eye, Briefcase, FileText, ExternalLink } from 'lucide-react';
 
 export default function ApplicationReview() {
@@ -121,15 +123,33 @@ export default function ApplicationReview() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content - Left Column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Application Status */}
+            {/* Application Timeline */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
               <GlassCard className="p-6">
+                <h2 className="text-2xl font-semibold text-white mb-6">Application Progress</h2>
+                <ApplicationTimeline 
+                  currentStatus={application.status}
+                  appliedDate={application.applied_at}
+                  viewedDate={application.viewed_at}
+                  shortlistedDate={application.shortlisted_at}
+                  rejectedDate={application.rejected_at}
+                />
+              </GlassCard>
+            </motion.div>
+
+            {/* Previous Status Display */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <GlassCard className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-semibold text-white">Status</h2>
+                  <h2 className="text-2xl font-semibold text-white">Current Status</h2>
                   <span className={`px-4 py-2 rounded-full text-sm font-medium capitalize ${statusColors[application.status]}`}>
                     {application.status}
                   </span>

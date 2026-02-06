@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
+import { EmptyState } from '../../components';
 import { Briefcase, MapPin, Clock, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -96,14 +97,15 @@ export default function MyApplications() {
         {loading ? (
           <div className="text-center text-gray-400">Loading applications...</div>
         ) : applications.length === 0 ? (
-          <GlassCard className="p-12 text-center">
-            <Briefcase className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-            <h3 className="text-xl font-semibold text-white mb-2">No applications yet</h3>
-            <p className="text-gray-400 mb-6">Start applying to jobs to see them here</p>
-            <Button variant="primary" onClick={() => navigate('/dashboard')}>
-              Browse Jobs
-            </Button>
-          </GlassCard>
+          <div className="flex justify-center py-12">
+            <EmptyState 
+              icon={Briefcase}
+              title="No applications yet"
+              description="Start applying to jobs to see them here"
+              action={() => navigate('/dashboard')}
+              variant="seeker"
+            />
+          </div>
         ) : (
           <motion.div
             variants={containerVariants}

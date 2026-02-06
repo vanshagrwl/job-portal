@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
-import { StackedJobCard } from '../../components';
+import { StackedJobCard, EmptyState } from '../../components';
 import FilterDrawer from '../../components/FilterDrawer';
 import DashboardStats from '../../components/DashboardStats';
 import ProfileCompletion from '../../components/ProfileCompletion';
@@ -471,11 +471,14 @@ export default function SeekerDashboard() {
         )}
 
         {!loading && filteredJobs.length === 0 && (
-          <GlassCard className="p-12 text-center">
-            <Briefcase className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-            <h3 className="text-xl font-semibold text-white mb-2">No jobs found</h3>
-            <p className="text-gray-400">Try adjusting your search filters</p>
-          </GlassCard>
+          <div className="flex justify-center py-12">
+            <EmptyState 
+              icon={Briefcase}
+              title="No jobs found"
+              description="Try adjusting your search filters or check back later"
+              variant="seeker"
+            />
+          </div>
         )}
 
         {/* Filter Drawer */}
