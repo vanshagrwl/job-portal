@@ -11,6 +11,7 @@ import FilterDrawer from '../../components/FilterDrawer';
 import DashboardStats from '../../components/DashboardStats';
 import ProfileCompletion from '../../components/ProfileCompletion';
 import { Search, Briefcase, MapPin, Clock, FileText, X } from 'lucide-react';
+import LoadingSkeletonCard from '../../components/LoadingSkeletonCard';
 
 interface SearchSuggestion {
   type: 'title' | 'location' | 'skill';
@@ -437,8 +438,13 @@ export default function SeekerDashboard() {
           </div>
         </GlassCard>
 
-        {loading ? (
-          <div className="text-center text-gray-400">Loading jobs...</div>
+            {loading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div><LoadingSkeletonCard /></div>
+            <div><LoadingSkeletonCard /></div>
+            <div><LoadingSkeletonCard /></div>
+            <div><LoadingSkeletonCard /></div>
+          </div>
         ) : (
           <motion.div
             className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-0 auto-rows-max"
@@ -457,6 +463,7 @@ export default function SeekerDashboard() {
                   job={job}
                   onViewDetails={(id) => navigate(`/jobs/${id}`)}
                   index={idx}
+                  applied={hasApplied(job._id)}
                 />
               </motion.div>
             ))}

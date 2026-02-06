@@ -5,6 +5,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   children: React.ReactNode;
   theme?: 'employer' | 'seeker';
+  loading?: boolean;
 }
 
 export default function Button({
@@ -12,6 +13,7 @@ export default function Button({
   children,
   className = '',
   theme = 'seeker',
+  loading = false,
   ...props
 }: ButtonProps) {
   const baseStyles = 'inline-flex items-center justify-center gap-2 h-12 px-6 rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group';
@@ -39,6 +41,7 @@ export default function Button({
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       transition={{ type: 'spring', stiffness: 280, damping: 25, mass: 1.2 }}
+      disabled={props.disabled || loading}
       {...props}
     >
       {/* Liquid Fill Effect - Background layer that fills on hover */}
@@ -86,7 +89,17 @@ export default function Button({
 
       {/* Content */}
       <span className="relative z-10 flex items-center gap-2">
-        {children}
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <svg className="w-4 h-4 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <span>{children}</span>
+          </span>
+        ) : (
+          children
+        )}
       </span>
     </motion.button>
   );

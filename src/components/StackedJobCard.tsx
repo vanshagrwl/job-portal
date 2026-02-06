@@ -10,6 +10,7 @@ interface StackedJobCardProps {
   onViewDetails: (jobId: string) => void;
   theme?: 'employer' | 'seeker';
   index?: number;
+  applied?: boolean;
 }
 
 export default function StackedJobCard({
@@ -40,21 +41,29 @@ export default function StackedJobCard({
       >
         {/* Top section with company and title */}
         <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <motion.h3
-              className={`text-xl font-bold mb-1 ${
-                theme === 'employer'
-                  ? 'text-employer-primary'
-                  : 'text-seeker-primary'
-              }`}
-              whileHover={{ x: 4 }}
-            >
-              {job.title}
-            </motion.h3>
-            <p className="text-gray-600 text-sm">
-              {job.employer_profile?.company_name || 'Company Name'}
-            </p>
-          </div>
+          <div className="flex-1 flex items-center gap-4">
+              {/* Company logo if present */}
+              {job.employer_profile?.company_logo_url ? (
+                <img src={job.employer_profile.company_logo_url} alt="logo" className="w-10 h-10 rounded-md object-cover" />
+              ) : (
+                <div className="w-10 h-10 rounded-md bg-white/5 flex items-center justify-center text-sm text-gray-300">{(job.employer_profile?.company_name||'')[0] || 'C'}</div>
+              )}
+              <div>
+                <motion.h3
+                  className={`text-xl font-bold mb-1 ${
+                    theme === 'employer'
+                      ? 'text-employer-primary'
+                      : 'text-seeker-primary'
+                  }`}
+                  whileHover={{ x: 4 }}
+                >
+                  {job.title}
+                </motion.h3>
+                <p className="text-gray-600 text-sm">
+                  {job.employer_profile?.company_name || 'Company Name'}
+                </p>
+              </div>
+            </div>
           <motion.div
             className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${
               theme === 'employer'
@@ -121,17 +130,26 @@ export default function StackedJobCard({
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="mt-auto"
+          className="mt-auto w-full"
         >
-          <Button
-            variant="primary"
-            theme={theme}
-            onClick={() => onViewDetails(job._id)}
-            className="w-full flex items-center justify-center gap-2"
-          >
-            <span>View Details</span>
-            <ArrowRight className="w-4 h-4" />
-          </Button>
+          {applied ? (
+            <div className="flex items-center justify-between w-full">
+              <span className="px-3 py-2 rounded-full bg-emerald-600/20 text-emerald-300 text-sm font-semibold">Applied</span>
+              <Button variant="secondary" className="text-sm" onClick={() => onViewDetails(job._id)}>
+                View
+              </Button>
+            </div>
+          ) : (
+            <Button
+              variant="primary"
+              theme={theme}
+              onClick={() => onViewDetails(job._id)}
+              className="w-full flex items-center justify-center gap-2"
+            >
+              <span>View Details</span>
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          )}
         </motion.div>
 
         {/* Hover indicator */}
