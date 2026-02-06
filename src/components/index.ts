@@ -28,3 +28,20 @@ export { default as Toast } from './Toast';
 export { default as EmptyState } from './EmptyState';
 export { default as ApplicationTimeline } from './ApplicationTimeline';
 export { FormValidationFeedback, ValidatedInput, ValidationRules } from './FormValidation';
+export { 
+  TouchTarget, 
+  GestureHandler, 
+  MobileSpacing, 
+  ResponsiveTypography, 
+  useHapticFeedback, 
+  useViewportHeight 
+} from './MobileOptimizations';
+export { 
+  DarkModeAccessible, 
+  ContrastChecker, 
+  KeyboardNavigationHints, 
+  useReducedMotion, 
+  useHighContrastMode, 
+  ColorBlindSimulator, 
+  AccessibilityAudit 
+} from './AccessibilityAudit';
