@@ -121,7 +121,7 @@ export default function StackedJobCard({
 
         {/* Description snippet */}
         <motion.p
-          className="text-gray-700 text-sm mb-5 line-clamp-2 flex-grow"
+          className={`${theme === 'seeker' ? 'text-gray-600' : 'text-gray-700'} text-sm mb-5 line-clamp-2 flex-grow`}
           whileHover={{ color: '#000000' }}
         >
           {job.description}
@@ -135,7 +135,11 @@ export default function StackedJobCard({
         >
           {applied ? (
             <div className="flex items-center justify-between w-full">
-              <span className="px-3 py-2 rounded-full bg-emerald-600/20 text-emerald-300 text-sm font-semibold">Applied</span>
+              <span className={`px-3 py-2 rounded-full text-sm font-semibold ${
+                theme === 'seeker'
+                  ? 'bg-seeker-secondary/20 text-seeker-secondary'
+                  : 'bg-emerald-600/20 text-emerald-300'
+              }`}>Applied</span>
               <Button variant="secondary" className="text-sm" onClick={() => onViewDetails(job._id)}>
                 View
               </Button>

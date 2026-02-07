@@ -30,9 +30,13 @@ export default function Card({
 
   const motionCfg = useMotionConfig();
 
+  const baseThemeClass = theme === 'employer'
+    ? 'bg-white backdrop-blur-sm border border-employer-accent/20'
+    : 'bg-white/5 backdrop-blur-sm border border-seeker-primary-light/10';
+
   return (
     <motion.div
-      className={`bg-white backdrop-blur-sm border border-gray-200 rounded-2xl shadow-depth-lg relative overflow-hidden group ${className}`}
+      className={`${baseThemeClass} rounded-2xl shadow-depth-lg relative overflow-hidden group ${className}`}
       initial={props.initial ?? motionCfg.cardInitial}
       animate={props.animate ?? motionCfg.cardAnimate}
       exit={props.exit}
