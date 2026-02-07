@@ -201,7 +201,7 @@ export default function EmployerDashboard() {
                             {job.salary_min && job.salary_max && (
                               <span className="flex items-center">
                                 <span className="w-3 h-3 mr-1 text-gray-400">₹</span>
-                                {job.salary_min.toLocaleString()} - {job.salary_max.toLocaleString()}
+                                {job.salary_min.toLocaleString()} - {job.salary_max.toLocaleString()} /M
                               </span>
                             )}
                           </div>

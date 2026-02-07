@@ -95,7 +95,7 @@ export default function StackedJobCard({
           >
             <Banknote className="w-4 h-4 text-gray-300" />
             <span className="text-sm">
-              {job.salary_max ? `₹${job.salary_max}` : 'Competitive'}
+              {job.salary_max ? `₹${job.salary_max} /M` : 'Competitive'}
             </span>
           </motion.div>
 

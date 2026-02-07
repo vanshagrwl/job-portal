@@ -179,7 +179,7 @@ export default function PostJob() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
-                label="Minimum Salary (INR)"
+                label="Minimum Monthly Salary (INR)"
                 type="number"
                 value={salaryMin}
                 onChange={(e) => setSalaryMin(e.target.value)}
@@ -187,7 +187,7 @@ export default function PostJob() {
               />
 
               <Input
-                label="Maximum Salary (INR)"
+                label="Maximum Monthly Salary (INR)"
                 type="number"
                 value={salaryMax}
                 onChange={(e) => setSalaryMax(e.target.value)}

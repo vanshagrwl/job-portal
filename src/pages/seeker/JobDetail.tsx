@@ -162,9 +162,9 @@ export default function JobDetail() {
               <div className="flex items-center space-x-2 text-gray-300">
                 <Banknote className="w-5 h-5 text-gray-500" />
                 <div>
-                  <p className="text-xs text-gray-500">Salary</p>
+                  <p className="text-xs text-gray-500">Monthly Salary</p>
                   <p className="text-sm font-medium">
-                    ₹{job.salary_min.toLocaleString()} - ₹{job.salary_max.toLocaleString()}
+                    ₹{job.salary_min.toLocaleString()} - ₹{job.salary_max.toLocaleString()} /M
                   </p>
                 </div>
               </div>
