@@ -18,21 +18,33 @@ import EmployerApplications from './pages/employer/EmployerApplications';
 import ApplicationReview from './pages/employer/ApplicationReview';
 
 function DashboardRouter() {
-  const { profile, loading, user } = useAuth();
+  const { profile, loading, user, token } = useAuth();
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-white">Loading...</div>
+        <div className="text-white">Loading dashboard...</div>
       </div>
     );
   }
+
   // Prefer the authoritative profile role, fall back to signed-in user role
   const role = profile?.role || user?.role;
 
-  if (role === 'seeker') return <SeekerDashboard />;
-  if (role === 'employer') return <EmployerDashboard />;
+  if (!role || !token) {
+    console.warn('No role detected, redirecting to login. Profile:', profile, 'User:', user);
+    return <Navigate to="/login" />;
+  }
 
+  if (role === 'seeker') {
+    return <SeekerDashboard />;
+  }
+  
+  if (role === 'employer') {
+    return <EmployerDashboard />;
+  }
+
+  console.warn('Unknown role:', role);
   return <Navigate to="/login" />;
 }
 

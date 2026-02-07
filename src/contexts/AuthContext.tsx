@@ -68,8 +68,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Sign in successful, token:', newToken.substring(0, 20) + '...');
       localStorage.setItem('token', newToken);
       setToken(newToken);
+      
+      // Immediately set user data
       setUser(userData);
       setProfile(userData);
+      
+      // Then fetch the full profile to ensure role is set
+      console.log('Fetching complete profile after sign in...');
+      try {
+        const fullProfile = await authAPI.getProfile(newToken);
+        console.log('Complete profile fetched, role:', fullProfile.role);
+        setUser(fullProfile);
+        setProfile(fullProfile);
+      } catch (profileError) {
+        console.error('Error fetching full profile after sign in:', profileError);
+        // Continue with the data from sign in if profile fetch fails
+      }
     } catch (error: any) {
       console.error('Sign in error:', error.message);
       throw error;
