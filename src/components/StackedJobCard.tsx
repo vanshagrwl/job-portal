@@ -18,6 +18,7 @@ export default function StackedJobCard({
   onViewDetails,
   theme = 'seeker',
   index = 0,
+  applied = false,
 }: StackedJobCardProps) {
   const motionCfg = useMotionConfig();
 

@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { MotionPrefProvider } from './contexts/MotionPreferenceContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -54,6 +55,7 @@ function App() {
       <Router>
         <AuthProvider>
           <ToastProvider>
+          <ErrorBoundary>
           <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -142,6 +144,7 @@ function App() {
 
           <Route path="*" element={<Navigate to="/" />} />
           </Routes>
+          </ErrorBoundary>
           </ToastProvider>
         </AuthProvider>
       </Router>

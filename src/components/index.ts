@@ -50,3 +50,4 @@ export {
   AnimatedFilterButton, 
   AnimatedFilterDrawer 
 } from './SearchFilterAnimations';
+export { default as ErrorBoundary } from './ErrorBoundary';
