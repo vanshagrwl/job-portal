@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
-// removed skeleton loader import
+import LoadingSkeletonCard from '../../components/LoadingSkeletonCard';
 import { Plus, Briefcase, Users, Eye, TrendingUp, MapPin } from 'lucide-react';
 import ProfileCompletion from '../../components/ProfileCompletion';
 
@@ -15,6 +15,7 @@ export default function EmployerDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingApps, setLoadingApps] = useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -45,11 +46,14 @@ export default function EmployerDashboard() {
   const fetchApplications = async () => {
     if (!user || !token) return;
 
+    setLoadingApps(true);
     try {
       const apps = await applicationsAPI.getEmployerApplications(token);
       setApplications(apps || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
+    } finally {
+      setLoadingApps(false);
     }
   };
 
@@ -225,7 +229,13 @@ export default function EmployerDashboard() {
 
           <div>
             <h2 className="text-2xl font-bold text-white mb-4">Recent Applications</h2>
-            {applications.length === 0 ? (
+            {loadingApps ? (
+              <div className="space-y-4">
+                <LoadingSkeletonCard />
+                <LoadingSkeletonCard />
+                <LoadingSkeletonCard />
+              </div>
+            ) : applications.length === 0 ? (
               <GlassCard className="p-8 text-center">
                 <Users className="w-12 h-12 mx-auto mb-4 text-gray-600" />
                 <h3 className="text-lg font-semibold text-white mb-2">No applications yet</h3>
