@@ -22,8 +22,10 @@ export default function DashboardStats() {
             const apps = await applicationsAPI.getMyApplications(token);
             const items = apps || [];
             setMyAppsCount(items.length);
-            setPendingCount(items.filter((a: any) => a.status === 'pending').length || 0);
-            setCompletedCount(items.filter((a: any) => a.status === 'completed' || a.status === 'closed').length || 0);
+            // Pending = not yet viewed by employer
+            setPendingCount(items.filter((a: any) => a.status === 'pending' || a.status === 'viewed').length || 0);
+            // Completed = has a final decision (shortlisted or rejected)
+            setCompletedCount(items.filter((a: any) => a.status === 'shortlisted' || a.status === 'rejected').length || 0);
           } catch (e) {
             console.warn('Failed to load seeker apps', e);
             setMyAppsCount(0);
@@ -51,8 +53,10 @@ export default function DashboardStats() {
         if (profile?.role === 'employer') {
           try {
             const empApps = await applicationsAPI.getEmployerApplications(token);
+            // Pending = applications waiting for employer review
             setPendingCount(empApps?.filter((a: any) => a.status === 'pending').length || 0);
-            setCompletedCount(empApps?.filter((a: any) => a.status === 'completed' || a.status === 'closed').length || 0);
+            // Completed = has a final decision (shortlisted or rejected)
+            setCompletedCount(empApps?.filter((a: any) => a.status === 'shortlisted' || a.status === 'rejected').length || 0);
           } catch (e) {
             console.warn('Failed to load employer apps', e);
             setPendingCount(0);
