@@ -16,9 +16,11 @@ export default function ProfileCompletion() {
       try {
         if (profile.role === 'seeker') {
           const data = await profileAPI.getSeekerProfile(token);
+          console.log('Fetched seeker details for completion bar:', data);
           if (mounted) setSeekerDetails(data);
         } else if (profile.role === 'employer') {
           const data = await profileAPI.getEmployerProfile(token);
+          console.log('Fetched employer details for completion bar:', data);
           if (mounted) setEmployerDetails(data);
         }
       } catch (err) {
@@ -30,8 +32,8 @@ export default function ProfileCompletion() {
 
     fetchDetails();
     return () => { mounted = false; };
-    // Include profileUpdatedAt so details are refetched after an auth refresh
-  }, [profile, token, profileUpdatedAt]);
+    // Include profileUpdatedAt so details are refetched after an auth refresh or profile save
+  }, [profile, profile?.role, token, profileUpdatedAt]);
 
   if (!profile) return null;
 

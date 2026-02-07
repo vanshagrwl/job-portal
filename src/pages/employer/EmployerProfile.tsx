@@ -64,24 +64,24 @@ export default function EmployerProfilePage() {
       };
       
       console.log('Saving employer profile with payload:', payload);
-      console.log('Token:', token.substring(0, 20) + '...');
-
       const result = await profileAPI.updateEmployerProfile(payload, token);
-      
       console.log('Save result:', result);
+      
+      // Wait a moment for server to update, then refresh profile details
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Refresh base profile first
+      await refreshProfile();
+      
+      // Update phone in auth context if it changed
+      updateProfile({ phone: result.phone || phone });
+      
       alert('Profile saved successfully!');
-      // Update auth context so profile completion updates if contact phone changed
-      try {
-        updateProfile({ phone: result.phone || phone });
-        await refreshProfile();
-      } catch (e) {
-        console.warn('Could not refresh auth profile after employer save', e);
-      }
+      
+      // Refetch local employer profile to update form
       fetchProfile();
     } catch (error: any) {
       console.error('Error saving profile:', error);
-      console.error('Error type:', error.name);
-      console.error('Error message:', error.message);
       alert(error.message || 'Failed to save profile');
     } finally {
       setSaving(false);

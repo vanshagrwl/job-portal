@@ -106,15 +106,20 @@ export default function SeekerProfilePage() {
       alert('Profile saved successfully!');
       // Update auth context so profile completion and other UI update in real-time
       try {
+        // Refresh profile first to get fresh data from server, which sets profileUpdatedAt
+        await refreshProfile();
+        // Small delay to ensure server data is consistent
+        await new Promise(resolve => setTimeout(resolve, 300));
+        // Then update specific fields in auth context
         updateProfile({
           full_name: (updatedProfile.full_name as string) || undefined,
           phone: (updatedProfile.phone as string) || undefined,
         });
-        await refreshProfile();
       } catch (e) {
         // Non-fatal - UI already updated locally
         console.warn('Could not refresh auth profile after save', e);
       }
+      // Final fetch to ensure consistency
       fetchProfile();
     } catch (error: any) {
       console.error('Error saving profile:', error);
