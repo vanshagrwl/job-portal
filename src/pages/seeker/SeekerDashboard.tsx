@@ -45,11 +45,20 @@ export default function SeekerDashboard() {
   ];
 
   useEffect(() => {
+    console.log('SeekerDashboard mounted/updated:', { user, profile, token });
+
     if (user && token) {
+      // start loading while we fetch data
+      setLoading(true);
       fetchJobs();
       fetchApplications();
+      return;
     }
-  }, [user, token]);
+
+    // If there's no authenticated user/token yet, clear local loading
+    // so the UI can show an appropriate empty state instead of a blank loader.
+    setLoading(false);
+  }, [user, token, profile]);
 
   // Debounce search term
   useEffect(() => {
