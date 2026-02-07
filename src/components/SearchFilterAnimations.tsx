@@ -60,7 +60,7 @@ export const AnimatedSearchInput: React.FC<SearchInputProps> = ({
             className="absolute left-0 h-full flex items-center pointer-events-none"
             animate={{ left: isExpanded ? '14px' : '12px' }}
           >
-            <Search className="w-4 h-4 text-gray-400" />
+            <Search className="w-4 h-4 text-gray-300" />
           </motion.div>
 
           <motion.input
@@ -94,7 +94,7 @@ export const AnimatedSearchInput: React.FC<SearchInputProps> = ({
                 onClick={handleClear}
                 className="absolute right-3 p-1 hover:bg-white/10 rounded"
               >
-                <X className="w-4 h-4 text-gray-400" />
+                <X className="w-4 h-4 text-gray-300" />
               </motion.button>
             )}
           </AnimatePresence>
@@ -235,7 +235,7 @@ export const AnimatedFilterButton: React.FC<FilterButtonProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 onClick={onClear}
-                className="w-full px-4 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors border-t border-white/5"
+                className="w-full px-4 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/5 transition-colors border-t border-white/5"
               >
                 Clear filters
               </motion.button>
@@ -301,7 +301,7 @@ export const AnimatedFilterDrawer: React.FC<FilterDrawerContentProps> = ({
                   whileTap={{ scale: 0.9 }}
                   className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-400" />
+                  <X className="w-5 h-5 text-gray-300" />
                 </motion.button>
               </div>
             </motion.div>

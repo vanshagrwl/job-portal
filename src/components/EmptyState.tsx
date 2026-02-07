@@ -44,7 +44,7 @@ export default function EmptyState({
       <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 text-center">
         {title}
       </h3>
-      <p className="text-gray-400 text-sm sm:text-base text-center max-w-xs mb-6">
+      <p className="text-gray-300 text-sm sm:text-base text-center max-w-xs mb-6">
         {description}
       </p>
 

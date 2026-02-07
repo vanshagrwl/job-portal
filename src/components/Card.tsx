@@ -36,7 +36,7 @@ export default function Card({
 
   return (
     <motion.div
-      className={`${baseThemeClass} rounded-2xl shadow-depth-lg relative overflow-hidden group ${className}`}
+      className={`${baseThemeClass} rounded-2xl shadow-depth-lg relative overflow-hidden group text-gray-200 ${className}`}
       initial={props.initial ?? motionCfg.cardInitial}
       animate={props.animate ?? motionCfg.cardAnimate}
       exit={props.exit}

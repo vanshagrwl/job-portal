@@ -13,7 +13,7 @@ export default function GlassCard({ children, className = '', glow = false, ...p
 
   return (
     <motion.div
-      className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-depth-lg relative overflow-hidden group ${glow ? 'glow-sm' : ''} ${className}`}
+      className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-depth-lg relative overflow-hidden group text-gray-200 ${glow ? 'glow-sm' : ''} ${className}`}
       initial={props.initial ?? motionCfg.cardInitial}
       animate={props.animate ?? motionCfg.cardAnimate}
       exit={props.exit}

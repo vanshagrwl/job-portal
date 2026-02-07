@@ -60,7 +60,7 @@ export default function StackedJobCard({
                 >
                   {job.title}
                 </motion.h3>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-300 text-sm">
                   {job.employer_profile?.company_name || 'Company Name'}
                 </p>
               </div>
@@ -78,22 +78,22 @@ export default function StackedJobCard({
         </div>
 
         {/* Details grid */}
-        <div className="grid grid-cols-2 gap-4 mb-5 pb-5 border-b border-gray-200">
+        <div className="grid grid-cols-2 gap-4 mb-5 pb-5 border-b border-white/10">
           {/* Location */}
           <motion.div
-            className="flex items-center gap-2 text-gray-600"
+            className="flex items-center gap-2 text-gray-300"
             whileHover={{ x: 2 }}
           >
-            <MapPin className="w-4 h-4 text-gray-400" />
+            <MapPin className="w-4 h-4 text-gray-300" />
             <span className="text-sm">{job.location || 'Remote'}</span>
           </motion.div>
 
           {/* Salary */}
           <motion.div
-            className="flex items-center gap-2 text-gray-600"
+            className="flex items-center gap-2 text-gray-300"
             whileHover={{ x: 2 }}
           >
-            <Banknote className="w-4 h-4 text-gray-400" />
+            <Banknote className="w-4 h-4 text-gray-300" />
             <span className="text-sm">
               {job.salary_max ? `₹${job.salary_max}` : 'Competitive'}
             </span>
@@ -101,16 +101,16 @@ export default function StackedJobCard({
 
           {/* Category */}
           <motion.div
-            className="flex items-center gap-2 text-gray-600"
+            className="flex items-center gap-2 text-gray-300"
             whileHover={{ x: 2 }}
           >
-            <Briefcase className="w-4 h-4 text-gray-400" />
+            <Briefcase className="w-4 h-4 text-gray-300" />
             <span className="text-sm">{job.category || 'Tech'}</span>
           </motion.div>
 
           {/* Posted Date */}
           <motion.div
-            className="flex items-center gap-2 text-gray-600"
+            className="flex items-center gap-2 text-gray-300"
             whileHover={{ x: 2 }}
           >
             <span className="text-sm">
@@ -120,10 +120,7 @@ export default function StackedJobCard({
         </div>
 
         {/* Description snippet */}
-        <motion.p
-          className={`${theme === 'seeker' ? 'text-gray-600' : 'text-gray-700'} text-sm mb-5 line-clamp-2 flex-grow`}
-          whileHover={{ color: '#000000' }}
-        >
+        <motion.p className={`text-gray-300 text-sm mb-5 line-clamp-2 flex-grow`} whileHover={{ color: '#000000' }}>
           {job.description}
         </motion.p>
 

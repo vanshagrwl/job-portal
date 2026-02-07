@@ -102,7 +102,7 @@ export default function LoadingSpinner({
 
       {text && (
         <motion.p
-          className="text-gray-400 text-sm font-medium"
+          className="text-gray-300 text-sm font-medium"
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{
             duration: 1.5,

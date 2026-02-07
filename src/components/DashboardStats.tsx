@@ -68,7 +68,7 @@ export default function DashboardStats() {
         <GlassCard key={idx} className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm mb-1">{s.label}</p>
+              <p className="text-gray-300 text-sm mb-1">{s.label}</p>
               <p className="text-2xl font-bold text-white">{s.value}</p>
             </div>
             <div className={`p-3 rounded-xl bg-gradient-to-br ${s.color}`}>

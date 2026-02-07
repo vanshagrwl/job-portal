@@ -77,7 +77,7 @@ export default function FeatureCard({
         )}
 
         {description && (
-          <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors mb-4">
+          <p className="text-gray-300 text-sm group-hover:text-gray-200 transition-colors mb-4">
             {description}
           </p>
         )}

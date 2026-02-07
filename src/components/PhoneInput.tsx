@@ -70,7 +70,7 @@ export default function PhoneInput({ value, onChange, placeholder = 'Enter phone
       )}
       <div className="relative">
         <div className="relative flex items-center">
-          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
           <input
             type="tel"
             value={inputValue}
@@ -83,7 +83,7 @@ export default function PhoneInput({ value, onChange, placeholder = 'Enter phone
           {inputValue && (
             <button
               onClick={handleClear}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -125,18 +125,18 @@ export default function PhoneInput({ value, onChange, placeholder = 'Enter phone
                     <span className="text-xl">{country.flag}</span>
                     <div>
                       <p className="text-white font-medium">{country.name}</p>
-                      <p className="text-xs text-gray-400">{country.code}</p>
+                      <p className="text-xs text-gray-300">{country.code}</p>
                     </div>
                   </div>
                   <span className="text-blue-400 font-semibold">{country.phoneCode}</span>
                 </button>
               ))
             ) : inputValue.length > 1 ? (
-              <div className="px-4 py-3 text-gray-400 text-sm">
+              <div className="px-4 py-3 text-gray-300 text-sm">
                 No matching countries found
               </div>
             ) : (
-              <div className="px-4 py-3 text-gray-400 text-sm">
+              <div className="px-4 py-3 text-gray-300 text-sm">
                 Start typing to search countries...
               </div>
             )}
