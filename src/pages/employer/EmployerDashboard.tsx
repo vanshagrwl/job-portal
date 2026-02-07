@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Job, Application, jobsAPI, applicationsAPI } from '../../lib/api';
@@ -16,6 +16,7 @@ export default function EmployerDashboard() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingApps, setLoadingApps] = useState(false);
+  const isFirstAppsLoad = useRef(true);
 
   useEffect(() => {
     if (user && token) {
@@ -46,14 +47,19 @@ export default function EmployerDashboard() {
   const fetchApplications = async () => {
     if (!user || !token) return;
 
-    setLoadingApps(true);
+    // Only show the skeleton on the initial load. Subsequent polls should
+    // fetch silently to avoid flicker.
+    if (isFirstAppsLoad.current) setLoadingApps(true);
     try {
       const apps = await applicationsAPI.getEmployerApplications(token);
       setApplications(apps || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
     } finally {
-      setLoadingApps(false);
+      if (isFirstAppsLoad.current) {
+        setLoadingApps(false);
+        isFirstAppsLoad.current = false;
+      }
     }
   };
 
