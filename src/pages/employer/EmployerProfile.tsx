@@ -53,14 +53,22 @@ export default function EmployerProfilePage() {
 
     setSaving(true);
     try {
+      // Basic client-side validation and trimming to avoid server validation errors
+      const trimmedCompanyName = (companyName || '').trim();
+      if (!trimmedCompanyName) {
+        alert('Company name is required.');
+        setSaving(false);
+        return;
+      }
+
       const payload = {
-        company_name: companyName,
-        about_company: about,
-        industry,
-        company_size: companySize,
-        website,
-        location,
-        phone: phone
+        company_name: trimmedCompanyName,
+        about_company: (about || '').trim(),
+        industry: (industry || '').trim(),
+        company_size: (companySize || '').trim(),
+        website: (website || '').trim(),
+        location: (location || '').trim(),
+        phone: (phone || '').trim()
       };
       
       console.log('Saving employer profile with payload:', payload);
@@ -69,7 +77,7 @@ export default function EmployerProfilePage() {
       
       // Wait a moment for server to update, then refresh profile details
       await new Promise(resolve => setTimeout(resolve, 300));
-      
+
       // Refresh base profile first
       await refreshProfile();
       
