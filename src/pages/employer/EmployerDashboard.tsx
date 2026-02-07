@@ -21,10 +21,10 @@ export default function EmployerDashboard() {
     if (user && token) {
       fetchJobs();
       fetchApplications();
-      // Poll for new applications every 5 seconds
+      // Poll for new applications every 30 seconds
       const interval = setInterval(() => {
         fetchApplications();
-      }, 5000);
+      }, 30000);
       return () => clearInterval(interval);
     }
   }, [user, token]);
@@ -131,7 +131,16 @@ export default function EmployerDashboard() {
         </motion.div>
 
         <div className="mt-4">
+              ) : null}
+            {!loadingApps && applications.length > 0 && (
+              <div className="mt-4 text-center">
+                <Link to="/employer-applications">
+                  <Button variant="secondary" className="px-6">
+                    View All Applications
+                  </Button>
+                </Link>
           <ProfileCompletion />
+            )}
         </div>
 
         <motion.div
