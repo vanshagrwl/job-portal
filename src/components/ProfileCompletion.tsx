@@ -5,21 +5,24 @@ import { profileAPI } from '../lib/api';
 export default function ProfileCompletion() {
   const { profile, token, profileUpdatedAt } = useAuth();
   const [seekerDetails, setSeekerDetails] = useState<any | null>(null);
+  const [employerDetails, setEmployerDetails] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
-
-  
 
   useEffect(() => {
     let mounted = true;
     const fetchDetails = async () => {
       if (!profile || !token) return;
-      if (profile.role !== 'seeker') return;
       setLoading(true);
       try {
-        const data = await profileAPI.getSeekerProfile(token);
-        if (mounted) setSeekerDetails(data);
+        if (profile.role === 'seeker') {
+          const data = await profileAPI.getSeekerProfile(token);
+          if (mounted) setSeekerDetails(data);
+        } else if (profile.role === 'employer') {
+          const data = await profileAPI.getEmployerProfile(token);
+          if (mounted) setEmployerDetails(data);
+        }
       } catch (err) {
-        console.warn('Could not fetch seeker details for completion bar', err);
+        console.warn('Could not fetch profile details for completion bar', err);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -27,14 +30,17 @@ export default function ProfileCompletion() {
 
     fetchDetails();
     return () => { mounted = false; };
-    // include profileUpdatedAt so the seeker details are refetched after an auth refresh
+    // Include profileUpdatedAt so details are refetched after an auth refresh
   }, [profile, token, profileUpdatedAt]);
 
   if (!profile) return null;
 
-  // Base fields
-  let parts = 3; // full_name, email, phone
+  // Base fields (common to both seeker and employer)
+  let parts = 0;
   let filled = 0;
+
+  // Base fields: full_name, email, phone
+  parts = 3;
   if (profile.full_name && profile.full_name.trim() !== '') filled++;
   if (profile.email && profile.email.trim() !== '') filled++;
   if (profile.phone && profile.phone.trim() !== '') filled++;
@@ -47,6 +53,16 @@ export default function ProfileCompletion() {
       if (Array.isArray(seekerDetails.skills) && seekerDetails.skills.length > 0) filled++;
       if (seekerDetails.resume_url && seekerDetails.resume_url.trim() !== '') filled++;
       if (seekerDetails.location && seekerDetails.location.trim() !== '') filled++;
+    }
+  } else if (profile.role === 'employer') {
+    // For employer: company_name, about_company, industry, website, location
+    parts += 5;
+    if (employerDetails) {
+      if (employerDetails.company_name && employerDetails.company_name.trim() !== '') filled++;
+      if (employerDetails.about_company && employerDetails.about_company.trim() !== '') filled++;
+      if (employerDetails.industry && employerDetails.industry.trim() !== '') filled++;
+      if (employerDetails.website && employerDetails.website.trim() !== '') filled++;
+      if (employerDetails.location && employerDetails.location.trim() !== '') filled++;
     }
   }
 
