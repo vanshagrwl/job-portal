@@ -8,6 +8,7 @@ import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Select from '../../components/Select';
 import Button from '../../components/Button';
+import PageLoader from '../../components/PageLoader';
 import { ArrowLeft, Trash2, Save } from 'lucide-react';
 
 export default function JobEdit() {
@@ -126,13 +127,7 @@ export default function JobEdit() {
   };
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center h-screen">
-          <div className="text-white text-2xl">Loading...</div>
-        </div>
-      </Layout>
-    );
+    return <PageLoader text="Loading job details..." />;
   }
 
   if (!job) {
