@@ -79,7 +79,7 @@ export default function DashboardStats() {
     { label: 'My Applications', value: myAppsCount, icon: Users, color: 'from-blue-600 to-cyan-500' },
     { label: 'Open Jobs', value: openJobsCount, icon: Briefcase, color: 'from-emerald-600 to-teal-500' },
     { label: 'Pending Reviews', value: pendingCount, icon: Eye, color: 'from-amber-500 to-orange-400' },
-    { label: 'Completed', value: 0, icon: CheckCircle, color: 'from-rose-500 to-pink-400' }
+    { label: 'Completed', value: completedCount, icon: CheckCircle, color: 'from-rose-500 to-pink-400' }
   ];
 
   return (
