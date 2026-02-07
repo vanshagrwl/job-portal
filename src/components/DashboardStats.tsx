@@ -9,20 +9,26 @@ export default function DashboardStats() {
   const [myAppsCount, setMyAppsCount] = useState(0);
   const [openJobsCount, setOpenJobsCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
 
   useEffect(() => {
     if (!token || !user) return;
 
     const load = async () => {
       try {
-        // Load seeker applications
+        // Load seeker applications and derive counts
         if (profile?.role === 'seeker') {
           try {
             const apps = await applicationsAPI.getMyApplications(token);
-            setMyAppsCount(apps?.length || 0);
+            const items = apps || [];
+            setMyAppsCount(items.length);
+            setPendingCount(items.filter((a: any) => a.status === 'pending').length || 0);
+            setCompletedCount(items.filter((a: any) => a.status === 'completed' || a.status === 'closed').length || 0);
           } catch (e) {
             console.warn('Failed to load seeker apps', e);
             setMyAppsCount(0);
+            setPendingCount(0);
+            setCompletedCount(0);
           }
         }
 
@@ -32,19 +38,25 @@ export default function DashboardStats() {
           if (profile?.role === 'employer') {
             const myJobs = allJobs.filter((j: any) => j.employer_id === user._id);
             setOpenJobsCount(myJobs.filter((j: any) => j.status === 'active').length);
+          } else {
+            // For seekers show total active job openings
+            setOpenJobsCount(allJobs.filter((j: any) => j.status === 'active').length);
           }
         } catch (e) {
           console.warn('Failed to load jobs', e);
+          setOpenJobsCount(0);
         }
 
-        // Load employer applications
+        // Load employer applications (pending) when employer
         if (profile?.role === 'employer') {
           try {
             const empApps = await applicationsAPI.getEmployerApplications(token);
             setPendingCount(empApps?.filter((a: any) => a.status === 'pending').length || 0);
+            setCompletedCount(empApps?.filter((a: any) => a.status === 'completed' || a.status === 'closed').length || 0);
           } catch (e) {
             console.warn('Failed to load employer apps', e);
             setPendingCount(0);
+            setCompletedCount(0);
           }
         }
       } catch (e) {
@@ -52,8 +64,16 @@ export default function DashboardStats() {
       }
     };
 
+    // initial load
     load();
-  }, [token, user, profile?.role]);
+
+    // keep stats fresh by polling periodically
+    const interval = setInterval(() => {
+      load();
+    }, 10000); // refresh every 10s
+
+    return () => clearInterval(interval);
+  }, [token, user, profile?.role, profile?.profileUpdatedAt, profile]);
 
   const stats = [
     { label: 'My Applications', value: myAppsCount, icon: Users, color: 'from-blue-600 to-cyan-500' },
