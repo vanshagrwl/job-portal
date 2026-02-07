@@ -70,6 +70,13 @@ export default function EmployerProfilePage() {
       
       console.log('Save result:', result);
       alert('Profile saved successfully!');
+      // Update auth context so profile completion updates if contact phone changed
+      try {
+        updateProfile({ phone: result.phone || phone });
+        await refreshProfile();
+      } catch (e) {
+        console.warn('Could not refresh auth profile after employer save', e);
+      }
       fetchProfile();
     } catch (error: any) {
       console.error('Error saving profile:', error);

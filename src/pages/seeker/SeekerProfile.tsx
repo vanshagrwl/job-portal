@@ -104,6 +104,17 @@ export default function SeekerProfilePage() {
       setResumeFile(null);
       setResumeName('');
       alert('Profile saved successfully!');
+      // Update auth context so profile completion and other UI update in real-time
+      try {
+        updateProfile({
+          full_name: (updatedProfile.full_name as string) || undefined,
+          phone: (updatedProfile.phone as string) || undefined,
+        });
+        await refreshProfile();
+      } catch (e) {
+        // Non-fatal - UI already updated locally
+        console.warn('Could not refresh auth profile after save', e);
+      }
       fetchProfile();
     } catch (error: any) {
       console.error('Error saving profile:', error);
