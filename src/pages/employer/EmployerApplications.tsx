@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
+import PageLoader from '../../components/PageLoader';
 import { ArrowLeft, Eye, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 export default function EmployerApplications() {
@@ -58,13 +59,7 @@ export default function EmployerApplications() {
   };
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center h-screen">
-          <div className="text-white text-2xl">Loading...</div>
-        </div>
-      </Layout>
-    );
+    return <PageLoader text="Loading applications..." />;
   }
 
   return (

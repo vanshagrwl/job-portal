@@ -2,6 +2,7 @@
 export { default as AnimatedSection } from './AnimatedSection';
 export { default as AnimatedList } from './AnimatedList';
 export { default as LoadingSpinner } from './LoadingSpinner';
+export { default as PageLoader } from './PageLoader';
 export { default as LoadingSkeletonCard } from './LoadingSkeletonCard';
 export { default as FeatureCard } from './FeatureCard';
 export { default as Tooltip } from './Tooltip';

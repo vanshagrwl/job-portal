@@ -7,6 +7,7 @@ import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import PhoneInput from '../../components/PhoneInput';
+import PageLoader from '../../components/PageLoader';
 import { Building, Globe, MapPin } from 'lucide-react';
 
 export default function EmployerProfilePage() {
@@ -99,11 +100,7 @@ export default function EmployerProfilePage() {
 
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="text-center text-gray-400">Loading...</div>
-      </Layout>
-    );
+    return <PageLoader text="Loading company profile..." />;
   }
 
   return (

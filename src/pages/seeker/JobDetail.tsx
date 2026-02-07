@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
+import PageLoader from '../../components/PageLoader';
 import { MapPin, Banknote, Briefcase, Building, Calendar, ArrowLeft, FileText, AlertCircle } from 'lucide-react';
 
 export default function JobDetail() {
@@ -87,11 +88,7 @@ export default function JobDetail() {
   };
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="text-center text-gray-400">Loading...</div>
-      </Layout>
-    );
+    return <PageLoader text="Loading job details..." />;
   }
 
   if (!job) {

@@ -7,6 +7,7 @@ import GlassCard from '../../components/GlassCard';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import PhoneInput from '../../components/PhoneInput';
+import PageLoader from '../../components/PageLoader';
 import { Upload, FileText, X, CheckCircle } from 'lucide-react';
 
 export default function SeekerProfilePage() {
@@ -132,19 +133,7 @@ export default function SeekerProfilePage() {
 
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-screen">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="text-blue-400"
-          >
-            ⚙
-          </motion.div>
-        </div>
-      </Layout>
-    );
+    return <PageLoader text="Loading your profile..." />;
   }
 
   const containerVariants = {

@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
+import PageLoader from '../../components/PageLoader';
 import { EmptyState } from '../../components';
 import { Briefcase, MapPin, Clock, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -95,7 +96,7 @@ export default function MyApplications() {
         </div>
 
         {loading ? (
-          <div className="text-center text-gray-400">Loading applications...</div>
+          <PageLoader text="Loading your applications..." />
         ) : applications.length === 0 ? (
           <div className="flex justify-center py-12">
             <EmptyState 

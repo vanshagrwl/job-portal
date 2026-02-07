@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
-import { ApplicationTimeline } from '../../components';
+import PageLoader from '../../components/PageLoader';
 import { ApplicationTimeline } from '../../components';
 import { ArrowLeft, Mail, Phone, MapPin, Download, Check, X, Eye, Briefcase, FileText, ExternalLink } from 'lucide-react';
 
@@ -73,13 +73,7 @@ export default function ApplicationReview() {
   };
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center h-screen">
-          <div className="text-white text-2xl">Loading...</div>
-        </div>
-      </Layout>
-    );
+    return <PageLoader text="Loading application..." />;
   }
 
   if (!application) {
