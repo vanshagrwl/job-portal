@@ -6,6 +6,7 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   token: string | null;
+  profileUpdatedAt: number | null;
   signUp: (email: string, password: string, fullName: string, role: UserRole, companyName?: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
@@ -20,6 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileUpdatedAt, setProfileUpdatedAt] = useState<number | null>(null);
 
   useEffect(() => {
     // Check if token exists in localStorage on mount
@@ -39,6 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Profile fetched successfully:', profileData.full_name);
       setUser(profileData);
       setProfile(profileData);
+      setProfileUpdatedAt(Date.now());
     } catch (error) {
       console.error('Error fetching profile:', error);
       localStorage.removeItem('token');
@@ -80,6 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('Complete profile fetched, role:', fullProfile.role);
         setUser(fullProfile);
         setProfile(fullProfile);
+        setProfileUpdatedAt(Date.now());
       } catch (profileError) {
         console.error('Error fetching full profile after sign in:', profileError);
         // Continue with the data from sign in if profile fetch fails
@@ -110,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, token, signUp, signIn, signOut, updateProfile, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, token, profileUpdatedAt, signUp, signIn, signOut, updateProfile, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

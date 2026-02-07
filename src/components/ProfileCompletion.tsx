@@ -3,9 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { profileAPI } from '../lib/api';
 
 export default function ProfileCompletion() {
-  const { profile, token } = useAuth();
+  const { profile, token, profileUpdatedAt } = useAuth();
   const [seekerDetails, setSeekerDetails] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
+
+  
 
   useEffect(() => {
     let mounted = true;
@@ -25,7 +27,8 @@ export default function ProfileCompletion() {
 
     fetchDetails();
     return () => { mounted = false; };
-  }, [profile, token]);
+    // include profileUpdatedAt so the seeker details are refetched after an auth refresh
+  }, [profile, token, profileUpdatedAt]);
 
   if (!profile) return null;
 
