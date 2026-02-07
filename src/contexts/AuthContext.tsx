@@ -104,6 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updateProfile = (updatedProfile: Partial<Profile>) => {
     setUser(prev => prev ? { ...prev, ...updatedProfile } : null);
     setProfile(prev => prev ? { ...prev, ...updatedProfile } : null);
+    setProfileUpdatedAt(Date.now());
   };
 
   const refreshProfile = async () => {
