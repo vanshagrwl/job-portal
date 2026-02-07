@@ -102,8 +102,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateProfile = (updatedProfile: Partial<Profile>) => {
-    setUser(prev => prev ? { ...prev, ...updatedProfile } : null);
-    setProfile(prev => prev ? { ...prev, ...updatedProfile } : null);
+    // Only merge keys that are defined to avoid overwriting existing values with undefined
+    const definedEntries = Object.entries(updatedProfile).filter(([, v]) => v !== undefined) as [keyof Profile, any][];
+    if (definedEntries.length === 0) {
+      setProfileUpdatedAt(Date.now());
+      return;
+    }
+    const filtered: Partial<Profile> = Object.fromEntries(definedEntries) as Partial<Profile>;
+    setUser(prev => prev ? { ...prev, ...filtered } : null);
+    setProfile(prev => prev ? { ...prev, ...filtered } : null);
     setProfileUpdatedAt(Date.now());
   };
 
