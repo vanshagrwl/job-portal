@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import GlassCard from '../../components/GlassCard';
 import Button from '../../components/Button';
+import LoadingSkeletonCard from '../../components/LoadingSkeletonCard';
 import { Plus, Briefcase, Users, Eye, TrendingUp, MapPin } from 'lucide-react';
 import ProfileCompletion from '../../components/ProfileCompletion';
 
@@ -14,6 +15,7 @@ export default function EmployerDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingApps, setLoadingApps] = useState(true);
 
   useEffect(() => {
     if (user && token) {
@@ -49,6 +51,8 @@ export default function EmployerDashboard() {
       setApplications(apps || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
+    } finally {
+      setLoadingApps(false);
     }
   };
 
@@ -224,7 +228,20 @@ export default function EmployerDashboard() {
 
           <div>
             <h2 className="text-2xl font-bold text-white mb-4">Recent Applications</h2>
-            {applications.length === 0 ? (
+            {loadingApps ? (
+              <motion.div className="space-y-4">
+                {[0, 1, 2, 3, 4].map((idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: idx * 0.05, duration: 0.4 }}
+                  >
+                    <LoadingSkeletonCard />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : applications.length === 0 ? (
               <GlassCard className="p-8 text-center">
                 <Users className="w-12 h-12 mx-auto mb-4 text-gray-600" />
                 <h3 className="text-lg font-semibold text-white mb-2">No applications yet</h3>
