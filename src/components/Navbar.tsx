@@ -8,6 +8,7 @@ import { applicationsAPI } from '../lib/api';
 
 export default function Navbar() {
   const { user, profile, signOut, token } = useAuth();
+  const displayName = (profile?.full_name || (user as any)?.full_name || '').trim();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -141,7 +142,7 @@ export default function Navbar() {
                 <motion.div custom={1} variants={itemVariants} initial="hidden" animate="visible">
                   <Link to="/dashboard">
                     <Button variant="ghost" className="flex items-center space-x-2 text-sm lg:text-base">
-                      <span>{profile?.full_name?.split(' ')[0]}</span>
+                      <span>{displayName ? displayName.split(' ')[0] : 'Dashboard'}</span>
                     </Button>
                   </Link>
                 </motion.div>
@@ -228,7 +229,7 @@ export default function Navbar() {
             <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="w-full">
               <Button variant="ghost" className="w-full py-3 px-4 hover:bg-white/5">
                 <div className="flex flex-col items-center gap-1">
-                  <span className="text-sm truncate max-w-[160px] text-center">{profile?.full_name}</span>
+                  <span className="text-sm truncate max-w-[160px] text-center">{displayName || 'Dashboard'}</span>
                 </div>
               </Button>
             </Link>
