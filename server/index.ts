@@ -23,6 +23,7 @@ app.use(cors({
   origin: [
     'https://dreamai-job.vercel.app',
     'https://job-portal-orcin-eight.vercel.app',
+    'https://job-portalai.vercel.app',
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:3000',
