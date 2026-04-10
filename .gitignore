@@ -4,6 +4,7 @@ node_modules
 .env
 .env.*
 !.env.render.example
+!.env.example
 
 # build output
 dist
