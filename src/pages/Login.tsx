@@ -127,11 +127,15 @@ export default function Login() {
         <GlassCard className="p-6 sm:p-8 lg:p-10 shadow-2xl border border-white/10 bg-white/5 backdrop-blur-2xl">
           <motion.form
             onSubmit={handleSubmit}
+            autoComplete="off"
             className="space-y-6"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
+            {/* Prevent browser autofill from populating visible fields */}
+            <input type="text" name="username" autoComplete="username" style={{ display: 'none' }} />
+            <input type="password" name="password" autoComplete="new-password" style={{ display: 'none' }} />
             {/* Email Field */}
             <motion.div custom={3} variants={itemVariants} initial="hidden" animate="visible">
               <label className="block text-sm font-semibold text-white mb-2">
@@ -142,10 +146,12 @@ export default function Login() {
               </label>
               <Input
                 type="email"
+                name="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="off"
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:bg-white/20 focus:border-blue-400"
               />
             </motion.div>
@@ -160,10 +166,12 @@ export default function Login() {
               </label>
               <Input
                 type="password"
+                name="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="new-password"
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:bg-white/20 focus:border-blue-400"
               />
             </motion.div>

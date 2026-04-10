@@ -144,11 +144,15 @@ export default function Signup() {
         <GlassCard className="p-8 shadow-2xl border border-white/10 bg-white/5 backdrop-blur-2xl">
           <motion.form
             onSubmit={handleSubmit}
+            autoComplete="off"
             className="space-y-6"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
+            {/* Prevent browser autofill from populating visible fields */}
+            <input type="text" name="username" autoComplete="username" style={{ display: 'none' }} />
+            <input type="password" name="password" autoComplete="new-password" style={{ display: 'none' }} />
             {/* Error Message */}
             {error && (
               <motion.div
@@ -231,10 +235,12 @@ export default function Signup() {
               </label>
               <Input
                 type="text"
+                name="fullName"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="John Doe"
                 required
+                autoComplete="off"
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:bg-white/20 focus:border-blue-400"
               />
             </motion.div>
@@ -279,10 +285,12 @@ export default function Signup() {
               </label>
               <Input
                 type="email"
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
+                autoComplete="off"
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:bg-white/20 focus:border-blue-400"
               />
             </motion.div>
@@ -302,11 +310,13 @@ export default function Signup() {
               </label>
               <Input
                 type="password"
+                name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
                 minLength={6}
+                autoComplete="new-password"
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:bg-white/20 focus:border-blue-400"
               />
             </motion.div>

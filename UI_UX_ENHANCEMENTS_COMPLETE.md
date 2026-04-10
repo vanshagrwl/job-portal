@@ -1,4 +1,4 @@
-# Job Portal UI/UX Enhancement - Complete Summary
+ # Job Portal UI/UX Enhancement - Complete Summary
 
 ## Overview
 This document provides a comprehensive summary of all UI/UX enhancements implemented to transform the job portal into a professional, accessible, and polished platform.

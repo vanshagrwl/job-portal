@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { Profile } from '../models/Profile';
 import { SeekerProfile } from '../models/SeekerProfile';
 import { EmployerProfile } from '../models/EmployerProfile';
+import { Application } from '../models/Application';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { upload } from '../middleware/upload';
 import path from 'path';
@@ -113,13 +114,16 @@ router.put('/seeker', authMiddleware, upload.single('resume'), async (req: AuthR
     // Handle file upload
     if (req.file) {
       console.log('Processing file upload:', req.file.filename);
-      if (profile.resume_url) {
-        const oldPath = path.join(__dirname, '../../uploads/resumes', path.basename(profile.resume_url));
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
-      }
+      // Don't delete previous resume here: older applications may still reference it.
+      // (Cleanup can be handled later with a safe retention policy.)
       profile.resume_url = `/api/profile/resume/${req.file.filename}`;
+
+      // Keep existing applications downloadable by pointing them to the latest resume.
+      // Without this, older applications may reference a missing/old file.
+      await Application.updateMany(
+        { seeker_id: req.userId },
+        { $set: { resume_url: profile.resume_url, updated_at: new Date() } }
+      );
     }
     
     profile.updated_at = new Date();
@@ -284,7 +288,7 @@ router.get('/resume/:filename', authMiddleware, async (req: AuthRequest, res: Re
       return res.status(400).json({ error: 'Invalid filename' });
     }
 
-    const filepath = path.join(__dirname, '../../uploads/resumes', filename);
+    const filepath = path.resolve(__dirname, '..', '..', 'uploads', 'resumes', filename);
     
     console.log('Looking for file at:', filepath);
     
