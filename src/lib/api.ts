@@ -1,6 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'dreamai-job.vercel.app' 
-  ? 'https://job-portal-backend-production-7db4.up.railway.app/api'
-  : 'http://localhost:5000/api');
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  (typeof window !== 'undefined' && window.location.hostname === 'dreamai-job.vercel.app'
+    ? 'https://job-portal-backend.onrender.com/api'
+    : 'http://localhost:5000/api');
 
 export { API_URL };
 
@@ -20,12 +22,22 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}) {
     clearTimeout(timeout);
     
     if (!response.ok) {
-      throw new Error(`HTTP Error: ${response.status}`);
+      let message = `HTTP Error: ${response.status}`;
+      try {
+        const body = await response.json();
+        if (body?.error) message = body.error;
+      } catch {
+        // ignore JSON parsing errors
+      }
+      throw new Error(message);
     }
     
     return response;
   } catch (error) {
     clearTimeout(timeout);
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request timed out. Is the backend running on http://localhost:5000?');
+    }
     throw error;
   }
 }

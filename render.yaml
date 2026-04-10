@@ -1,0 +1,10 @@
+# Render Blueprint — deploy the Express API as a Web Service.
+# Dashboard: New → Blueprint → connect this repo, or create a Web Service manually with the same build/start commands.
+services:
+  - type: web
+    name: job-portal-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health

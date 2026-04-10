@@ -2,105 +2,75 @@
 
 ## Setup Summary
 
-This project has been configured for full-stack deployment:
-- **Frontend**: Deployed on Vercel (https://job-portal-orcin-eight.vercel.app)
-- **Backend**: Deployed on Railway (https://job-portal-production.up.railway.app)
-- **Database**: MongoDB Atlas (Cloud-hosted)
+This project is configured for full-stack deployment:
 
-## Important: Railway Environment Variables Setup
+- **Frontend**: Vercel (e.g. https://job-portal-orcin-eight.vercel.app or https://dreamai-job.vercel.app)
+- **Backend**: [Render](https://render.com) Web Service (see `render.yaml`)
+- **Database**: MongoDB Atlas
 
-Your backend has been deployed to Railway, but the environment variables need to be set manually on the Railway dashboard.
+## Render (backend)
 
-### ⚠️ CRITICAL NEXT STEPS:
+### Create the Web Service
 
-1. **Go to Railway Dashboard**: https://railway.com/dashboard
-2. **Select Project**: "job-portal-backend"
-3. **Go to Settings → Variables**
-4. **Add the following variables**:
-   ```
-   MONGODB_URI = mongodb+srv://agvansh:vansh123@jobportal.efztav4.mongodb.net/?appName=jobportal
-   JWT_SECRET = your_jwt_secret_key_here_change_in_production
-   PORT = 8080
-   ```
+1. In the [Render Dashboard](https://dashboard.render.com), choose **New** → **Web Service** and connect this GitHub repository (or use **New** → **Blueprint** if you use `render.yaml` from the repo root).
+2. Use:
+   - **Build command**: `npm install`
+   - **Start command**: `npm start`
+3. Set **Environment** variables (see `.env.render.example`):
 
-5. **Redeploy** the service after adding variables (click "Redeploy" button)
+   - `MONGODB_URI` — your MongoDB Atlas connection string
+   - `JWT_SECRET` — a long random secret for signing tokens
 
-### Get Your Backend URL
+   Render sets `PORT` automatically; the server reads `process.env.PORT`.
 
-After deployment completes:
-1. Go to Railway Dashboard
-2. Select "job-portal-backend" project
-3. Your backend URL will be shown at the top (something like `https://job-portal-production.up.railway.app`)
+4. After the first deploy, note the public URL (default pattern: `https://job-portal-backend.onrender.com` if the service name is `job-portal-backend`).
 
-## Update Vercel with Backend URL
+### Health check
 
-1. Go to https://vercel.com/dashboard
-2. Select your "job-portal" project
-3. Go to **Settings → Environment Variables**
-4. Update/Add:
-   - **Key**: `VITE_API_URL`
-   - **Value**: `https://[YOUR-RAILWAY-URL]/api` (replace with actual URL from Railway)
-   - **Environments**: Select "Production"
-5. Redeploy on Vercel
-
-## Files Modified
-
-- `.env` - Local development
-- `.env.production` - Production/Vercel configuration
-- `.env.railway` - Railway-specific configuration
-- `vercel.json` - Vercel configuration
-- `railway.json` - Railway configuration
-- `package.json` - Updated with `start` script for production
-
-## Testing the Deployment
-
-### Backend Health Check
 ```bash
-curl https://[YOUR-RAILWAY-URL]/health
+curl https://job-portal-backend.onrender.com/health
 ```
 
-### Frontend Health Check
-Visit: https://job-portal-orcin-eight.vercel.app
+If you rename the Render service, replace the hostname in the URL above.
+
+## Vercel (frontend)
+
+1. Open [Vercel Dashboard](https://vercel.com/dashboard) → your project → **Settings** → **Environment Variables**.
+2. Set `VITE_API_URL` to your Render API base URL, including `/api`, for example:
+
+   `https://job-portal-backend.onrender.com/api`
+
+3. Redeploy the frontend so Vite picks up the variable at build time.
+
+## Files Reference
+
+- `.env` — local development (not committed if you add it to `.gitignore`)
+- `.env.production` — default production `VITE_API_URL` for local builds
+- `.env.render.example` — variables to copy into Render
+- `render.yaml` — Render Blueprint for the API
+- `vercel.json` — SPA routing on Vercel
 
 ## Troubleshooting
 
-### Backend not connecting to MongoDB on Railway
-- Ensure environment variables are set in Railway dashboard
-- Check Railway logs: Dashboard → Logs
-- Redeploy after setting variables
+### Backend cannot reach MongoDB
 
-### Frontend getting 404 errors
-- Ensure `VITE_API_URL` is set correctly in Vercel
-- Verify it matches your Railway backend URL
-- Redeploy Vercel after updating environment variables
+- Confirm `MONGODB_URI` in Render → **Environment** and check **Logs** for connection errors.
 
-### CORS Issues
-- Already configured in `server/index.ts` with `origin: '*'`
-- Should work across any frontend domain
+### Frontend API errors or CORS
 
-## Local Development
+- Ensure `VITE_API_URL` matches your Render URL (with `/api`).
+- CORS allowed origins are defined in `server/index.ts`; add your production frontend origin there if it is not listed.
+
+### Render free tier cold starts
+
+- The first request after idle may take longer while the service wakes up.
+
+## Local development
 
 ```bash
-# Install dependencies
 npm install
-
-# Run both frontend and backend locally
 npm run dev:all
-
-# Frontend: http://localhost:5173
-# Backend: http://localhost:5000
 ```
 
-## Production URLs
-
-- **Frontend**: https://job-portal-orcin-eight.vercel.app
-- **Backend**: https://job-portal-production.up.railway.app
-- **API Base**: https://job-portal-production.up.railway.app/api
-
-## Next Steps
-
-1. ✅ Push to GitHub (done)
-2. ⏳ Set Railway environment variables (IMPORTANT)
-3. ⏳ Update Vercel environment variables
-4. ⏳ Redeploy services
-5. ✅ Test the application
+- Frontend: http://localhost:5173  
+- Backend: http://localhost:5000  
