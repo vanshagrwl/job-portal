@@ -1,8 +1,5 @@
 const API_URL =
-  import.meta.env.VITE_API_URL ||
-  (typeof window !== 'undefined' && window.location.hostname === 'dreamai-job.vercel.app'
-    ? 'https://job-portal-backend.onrender.com/api'
-    : 'http://localhost:5000/api');
+  import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export { API_URL };
 

@@ -1,1 +1,15 @@
 node_modules
+
+# env files (never commit secrets)
+.env
+.env.*
+!.env.render.example
+
+# build output
+dist
+
+# user uploads
+uploads
+
+# accidental nested copy (was tracked before)
+OneDrive
