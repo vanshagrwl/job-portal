@@ -20,6 +20,9 @@ const applicationSchema = new mongoose.Schema({
     default: 'pending',
   },
   resume_url: String,
+  viewed_at: Date,
+  shortlisted_at: Date,
+  rejected_at: Date,
   applied_at: {
     type: Date,
     default: Date.now,
@@ -175,3 +178,20 @@ export {
   migrateApplicationIndexes,
   submitApplication,
 };
+
+export function normalizeApplicationFields(application: {
+  job_id?: string;
+  seeker_id?: string;
+  job?: string;
+  applicant?: string;
+}) {
+  const jobId = String(application.job_id || application.job || '').trim();
+  const seekerId = String(application.seeker_id || application.applicant || '').trim();
+
+  application.job_id = jobId;
+  application.seeker_id = seekerId;
+  application.job = jobId;
+  application.applicant = seekerId;
+
+  return { jobId, seekerId };
+}

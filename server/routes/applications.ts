@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import mongoose from 'mongoose';
-import { Application, submitApplication } from '../models/Application';
+import { Application, submitApplication, normalizeApplicationFields } from '../models/Application';
 import { Job } from '../models/Job';
 import { SeekerProfile } from '../models/SeekerProfile';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
@@ -129,23 +129,58 @@ router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
 // Update application status
 router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const { status } = req.body;
-    const application = await Application.findById(req.params.id);
+    if (req.role !== 'employer') {
+      return res.status(403).json({ error: 'Only employers can update applications' });
+    }
 
+    const { status } = req.body;
+    const validStatuses = ['pending', 'viewed', 'shortlisted', 'rejected'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid application status' });
+    }
+
+    const application = await Application.findById(req.params.id);
     if (!application) {
       return res.status(404).json({ error: 'Application not found' });
     }
 
-    const job = await findJobById(application.job_id || application.job || '');
-    if (job?.employer_id !== req.userId) {
+    const appData = application.toObject();
+    const { jobId, seekerId } = normalizeApplicationFields(appData);
+
+    if (!jobId || !seekerId) {
+      return res.status(400).json({ error: 'Application is missing job or seeker information' });
+    }
+
+    const job = await findJobById(jobId);
+    if (!job || String(job.employer_id) !== String(req.userId)) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    application.status = status;
-    application.updated_at = new Date();
-    await application.save();
+    const now = new Date();
+    const update: Record<string, unknown> = {
+      status,
+      updated_at: now,
+      job_id: jobId,
+      seeker_id: seekerId,
+      job: jobId,
+      applicant: seekerId,
+    };
 
-    res.json(application);
+    if (status === 'viewed') update.viewed_at = now;
+    if (status === 'shortlisted') update.shortlisted_at = now;
+    if (status === 'rejected') update.rejected_at = now;
+
+    const updated = await Application.findByIdAndUpdate(
+      application._id,
+      { $set: update },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: 'Application not found' });
+    }
+
+    res.json(updated);
   } catch (error) {
     console.error('Update application error:', error);
     res.status(500).json({ error: 'Failed to update application' });

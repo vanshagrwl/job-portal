@@ -107,6 +107,9 @@ export interface Application {
   resume_url?: string;
   applied_at: string;
   updated_at: string;
+  viewed_at?: string;
+  shortlisted_at?: string;
+  rejected_at?: string;
   job?: Job;
   seeker_profile?: SeekerProfile & { profile?: Profile };
 }
@@ -304,13 +307,24 @@ export const applicationsAPI = {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ status })
+      body: JSON.stringify({ status }),
     });
-    if (!response.ok) throw new Error('Failed to update application');
+
+    if (!response.ok) {
+      let message = 'Failed to update application';
+      try {
+        const data = await response.json();
+        if (data?.error) message = data.error;
+      } catch {
+        // ignore JSON parsing errors
+      }
+      throw new Error(message);
+    }
+
     return response.json();
-  }
+  },
 };
 
 // Profile API
