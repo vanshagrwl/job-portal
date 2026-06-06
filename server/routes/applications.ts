@@ -59,6 +59,10 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
     }
 
     if (existingApplication) {
+      existingApplication.job_id = storedJobId;
+      existingApplication.seeker_id = seekerId;
+      existingApplication.job = storedJobId;
+      existingApplication.applicant = seekerId;
       existingApplication.resume_url = resumeUrl;
       existingApplication.updated_at = new Date();
       await existingApplication.save();
@@ -68,6 +72,8 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
     const application = new Application({
       job_id: storedJobId,
       seeker_id: seekerId,
+      job: storedJobId,
+      applicant: seekerId,
       resume_url: resumeUrl,
     });
 
@@ -85,7 +91,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
 
     console.error('Apply error:', error);
     res.status(500).json({
-      error: err?.message || 'Failed to apply for job',
+      error: 'Failed to apply for job. Please try again in a moment.',
     });
   }
 });

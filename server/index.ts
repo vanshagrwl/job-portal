@@ -8,6 +8,7 @@ import authRoutes from './routes/auth';
 import jobRoutes from './routes/jobs';
 import applicationRoutes from './routes/applications';
 import profileRoutes from './routes/profile';
+import { migrateApplicationIndexes } from './models/Application';
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -50,10 +51,11 @@ mongoose
   .connect(mongoUri, {
     serverSelectionTimeoutMS: 5000,
   })
-  .then(() => {
+  .then(async () => {
     console.log('Connected to MongoDB');
     console.log('DB name:', mongoose.connection.name);
     console.log('DB host:', mongoose.connection.host);
+    await migrateApplicationIndexes();
   })
   .catch(err => console.error('MongoDB connection error:', err));
 
