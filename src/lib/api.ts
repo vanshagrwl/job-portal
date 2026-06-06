@@ -256,11 +256,22 @@ export const applicationsAPI = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ job_id })
+      body: JSON.stringify({ job_id }),
     });
-    if (!response.ok) throw new Error('Failed to apply');
+
+    if (!response.ok) {
+      let message = 'Failed to apply';
+      try {
+        const data = await response.json();
+        if (data?.error) message = data.error;
+      } catch {
+        // ignore JSON parsing errors
+      }
+      throw new Error(message);
+    }
+
     return response.json();
   },
 
