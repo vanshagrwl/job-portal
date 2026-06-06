@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import mongoose from 'mongoose';
-import { Application, findExistingApplication } from '../models/Application';
+import { Application, submitApplication } from '../models/Application';
 import { Job } from '../models/Job';
 import { SeekerProfile } from '../models/SeekerProfile';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
@@ -36,8 +36,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: 'Job ID is required' });
     }
 
-    const normalizedJobId = String(job_id).trim();
-    const job = await findJobById(normalizedJobId);
+    const job = await findJobById(String(job_id).trim());
     if (!job) {
       return res.status(404).json({ error: 'Job not found' });
     }
@@ -45,9 +44,6 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
     if (job.status === 'closed') {
       return res.status(400).json({ error: 'This job is no longer accepting applications' });
     }
-
-    const storedJobId = String(job._id);
-    const existingApplication = await findExistingApplication(seekerId, storedJobId);
 
     const seekerProfile = await SeekerProfile.findOne({ user_id: seekerId });
     const resumeUrl = seekerProfile?.resume_url?.trim() || '';
@@ -58,37 +54,9 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
       });
     }
 
-    if (existingApplication) {
-      existingApplication.job_id = storedJobId;
-      existingApplication.seeker_id = seekerId;
-      existingApplication.job = storedJobId;
-      existingApplication.applicant = seekerId;
-      existingApplication.resume_url = resumeUrl;
-      existingApplication.updated_at = new Date();
-      await existingApplication.save();
-      return res.status(200).json(existingApplication);
-    }
-
-    const application = new Application({
-      job_id: storedJobId,
-      seeker_id: seekerId,
-      job: storedJobId,
-      applicant: seekerId,
-      resume_url: resumeUrl,
-    });
-
-    await application.save();
-    res.status(201).json(application);
+    const application = await submitApplication(seekerId, String(job._id), resumeUrl);
+    res.status(200).json(application);
   } catch (error: unknown) {
-    const err = error as { code?: number; message?: string };
-    if (err?.code === 11000) {
-      const normalizedJobId = String(req.body?.job_id || '').trim();
-      const existing = await findExistingApplication(String(req.userId || ''), normalizedJobId);
-      if (existing) {
-        return res.status(200).json(existing);
-      }
-    }
-
     console.error('Apply error:', error);
     res.status(500).json({
       error: 'Failed to apply for job. Please try again in a moment.',
@@ -106,7 +74,9 @@ router.get('/employer/my-applications', authMiddleware, async (req: AuthRequest,
     const jobs = await Job.find({ employer_id: req.userId });
     const jobIds = jobs.map((job) => String(job._id));
 
-    const applications = await Application.find({ job_id: { $in: jobIds } });
+    const applications = await Application.find({
+      $or: [{ job_id: { $in: jobIds } }, { job: { $in: jobIds } }],
+    });
     res.json(applications);
   } catch (error) {
     console.error('Get employer applications error:', error);
@@ -121,7 +91,10 @@ router.get('/my-applications', authMiddleware, async (req: AuthRequest, res: Res
       return res.status(403).json({ error: 'Only seekers can view applications' });
     }
 
-    const applications = await Application.find({ seeker_id: String(req.userId) });
+    const seekerId = String(req.userId);
+    const applications = await Application.find({
+      $or: [{ seeker_id: seekerId }, { applicant: seekerId }],
+    });
     res.json(applications);
   } catch (error) {
     console.error('Get applications error:', error);
@@ -138,7 +111,10 @@ router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Application not found' });
     }
 
-    const seekerProfile = await SeekerProfile.findOne({ user_id: application.seeker_id });
+    const seekerId = application.seeker_id || application.applicant;
+    const seekerProfile = seekerId
+      ? await SeekerProfile.findOne({ user_id: seekerId })
+      : null;
 
     res.json({
       ...application.toObject(),
@@ -160,7 +136,7 @@ router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Application not found' });
     }
 
-    const job = await findJobById(application.job_id);
+    const job = await findJobById(application.job_id || application.job || '');
     if (job?.employer_id !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
