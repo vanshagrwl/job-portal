@@ -1,11 +1,6 @@
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 
 const applicationSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    default: () => uuidv4(),
-  },
   job_id: {
     type: String,
     required: true,
@@ -32,6 +27,20 @@ const applicationSchema = new mongoose.Schema({
   },
 });
 
-applicationSchema.index({ job_id: 1, seeker_id: 1 }, { unique: true });
-
 export const Application = mongoose.model('Application', applicationSchema);
+
+async function findExistingApplication(seekerId: string, jobId: string) {
+  const normalizedJobId = String(jobId).trim();
+  const jobIdVariants: Array<string | mongoose.Types.ObjectId> = [normalizedJobId];
+
+  if (mongoose.isValidObjectId(normalizedJobId)) {
+    jobIdVariants.push(new mongoose.Types.ObjectId(normalizedJobId));
+  }
+
+  return Application.findOne({
+    seeker_id: seekerId,
+    job_id: { $in: jobIdVariants },
+  });
+}
+
+export { findExistingApplication };

@@ -58,7 +58,9 @@ export default function JobDetail() {
 
     try {
       const applications = await applicationsAPI.getMyApplications(token);
-      const hasAppliedToJob = applications.some(app => app.job_id === id);
+      const hasAppliedToJob = applications.some(
+        (app) => String(app.job_id) === String(id)
+      );
       setHasApplied(hasAppliedToJob);
     } catch (error) {
       console.error('Error checking application:', error);

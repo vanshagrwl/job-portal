@@ -206,7 +206,7 @@ export default function SeekerDashboard() {
   }, [allJobs, debouncedSearchTerm, debouncedLocationFilter, categoryFilter, calculateRelevance]);
 
   const hasApplied = (jobId: string) => {
-    return applications.some(app => app.job_id === jobId);
+    return applications.some(app => String(app.job_id) === String(jobId));
   };
 
   const containerVariants = {

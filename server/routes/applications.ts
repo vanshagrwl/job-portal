@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import mongoose from 'mongoose';
-import { Application } from '../models/Application';
+import { Application, findExistingApplication } from '../models/Application';
 import { Job } from '../models/Job';
 import { SeekerProfile } from '../models/SeekerProfile';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
@@ -47,14 +47,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
     }
 
     const storedJobId = String(job._id);
-    const existingApplication = await Application.findOne({
-      seeker_id: seekerId,
-      job_id: { $in: [storedJobId, normalizedJobId] },
-    });
-
-    if (existingApplication) {
-      return res.status(400).json({ error: 'Already applied for this job' });
-    }
+    const existingApplication = await findExistingApplication(seekerId, storedJobId);
 
     const seekerProfile = await SeekerProfile.findOne({ user_id: seekerId });
     const resumeUrl = seekerProfile?.resume_url?.trim() || '';
@@ -63,6 +56,13 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
       return res.status(400).json({
         error: 'Resume is required to apply. Please upload a resume in your profile first.',
       });
+    }
+
+    if (existingApplication) {
+      existingApplication.resume_url = resumeUrl;
+      existingApplication.updated_at = new Date();
+      await existingApplication.save();
+      return res.status(200).json(existingApplication);
     }
 
     const application = new Application({
@@ -76,7 +76,11 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   } catch (error: unknown) {
     const err = error as { code?: number; message?: string };
     if (err?.code === 11000) {
-      return res.status(400).json({ error: 'Already applied for this job' });
+      const normalizedJobId = String(req.body?.job_id || '').trim();
+      const existing = await findExistingApplication(String(req.userId || ''), normalizedJobId);
+      if (existing) {
+        return res.status(200).json(existing);
+      }
     }
 
     console.error('Apply error:', error);
